@@ -5,60 +5,146 @@ import { logout } from "../store/authSlice";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { FaUser, FaShoppingBag, FaCog, FaSignOutAlt, FaEdit, FaKey } from "react-icons/fa";
 import GlassyNav from "../components/GlassyNav";
 import ShootingStars from "../components/ShootingStars";
 import FlickeringStars from "../components/FlickeringStars";
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #2A0066 0%, #4B0082 100%);
+  background: linear-gradient(135deg, #1c1c3d 0%, #4b0082 100%);
   position: relative;
   color: white;
-  padding: 10rem 2rem 2rem 2rem;
+  display: flex;
+`;
+
+const Sidebar = styled.div`
+  width: 280px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
+
+const MainContent = styled.div`
+  flex: 1;
+  padding: 2rem 3rem;
+  overflow-y: auto;
+`;
+
+const UserProfile = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const Avatar = styled.div`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: white;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+`;
+
+const UserName = styled.h2`
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+`;
+
+const UserEmail = styled.p`
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+`;
+
+const NavMenu = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const NavItem = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: ${props => props.active ? 'rgba(167, 139, 250, 0.1)' : 'transparent'};
+  border: none;
+  border-radius: 12px;
+  color: ${props => props.active ? '#a78bfa' : 'white'};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: left;
+  font-size: 1rem;
+
+  &:hover {
+    background: rgba(167, 139, 250, 0.1);
+    color: #a78bfa;
+  }
+
+  svg {
+    font-size: 1.2rem;
+  }
 `;
 
 const Title = styled.h1`
-  font-size: 2.5rem;
-  text-align: center;
-  margin: 2rem 0 3rem 0;
+  font-size: 2rem;
   font-weight: 700;
-  letter-spacing: 2px;
-  background: linear-gradient(45deg, #fff, #B6D5FF);
+  margin-bottom: 2rem;
+  background: linear-gradient(to right, #fff, #a78bfa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 `;
 
-const TabContainer = styled.div`
-  display: flex;
-  gap: 1rem;
+const StatsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 2rem;
-  justify-content: center;
 `;
 
-const Tab = styled.button`
-  padding: 0.8rem 2rem;
-  background: ${props => props.active ? 
-    'rgba(255, 255, 255, 0.2)' : 
-    'rgba(255, 255, 255, 0.1)'};
-  border: none;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
+const StatCard = styled(motion.div)`
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
+const StatLabel = styled.div`
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+`;
+
+const StatValue = styled.div`
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #a78bfa;
 `;
 
 const ContentContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  background: rgba(20, 0, 50, 0.5);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
 `;
 
 const Table = styled.table`
@@ -70,16 +156,38 @@ const Table = styled.table`
 const Th = styled.th`
   text-align: left;
   padding: 1rem;
-  color: #B6D5FF;
+  color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
   font-size: 0.9rem;
 `;
 
 const Td = styled.td`
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  &:first-child { border-radius: 8px 0 0 8px; }
-  &:last-child { border-radius: 0 8px 8px 0; }
+  background: rgba(255, 255, 255, 0.03);
+  &:first-child { border-radius: 12px 0 0 12px; }
+  &:last-child { border-radius: 0 12px 12px 0; }
+`;
+
+const StatusBadge = styled.span`
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  
+  ${props => props.status === 'PAID' && `
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+  `}
+  
+  ${props => props.status === 'CAN' && `
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  `}
+
+  ${props => props.status === 'FULFILLED' && `
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+  `}
 `;
 
 const FormGroup = styled.div`
@@ -89,22 +197,24 @@ const FormGroup = styled.div`
 const Label = styled.label`
   display: block;
   margin-bottom: 0.5rem;
-  color: #B6D5FF;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.9rem;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 0.8rem;
-  background: rgba(20, 0, 50, 0.8);
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: 12px;
   color: white;
   font-size: 1rem;
+  transition: all 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: #B6D5FF;
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.2);
   }
 
   &:disabled {
@@ -114,68 +224,53 @@ const Input = styled.input`
 `;
 
 const Button = styled(motion.button)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   width: 100%;
   padding: 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
   margin-top: 1rem;
   font-size: 1rem;
-  position: relative;
-  overflow: hidden;
   transition: all 0.3s ease;
   
-  ${props => props.variant === 'change-password' && `
-    background: rgba(255, 255, 255, 0.1);
+  ${props => props.variant === 'primary' && `
+    background: linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%);
     color: white;
+    
     &:hover {
-      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(167, 139, 250, 0.4);
     }
   `}
   
-  ${props => props.variant === 'logout' && `
-    background: rgba(255, 0, 0, 0.2);
+  ${props => props.variant === 'secondary' && `
+    background: rgba(255, 255, 255, 0.05);
     color: white;
-    border: 2px solid rgba(255, 0, 0, 0.5);
-    box-shadow: 
-      0 0 10px rgba(255, 0, 0, 0.4),
-      0 0 20px rgba(255, 0, 0, 0.3),
-      0 0 30px rgba(255, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     
     &:hover {
-      background: rgba(255, 0, 0, 0.3);
-      box-shadow: 
-        0 0 15px rgba(255, 0, 0, 0.5),
-        0 0 25px rgba(255, 0, 0, 0.4),
-        0 0 35px rgba(255, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.1);
     }
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(
-        circle at center, 
-        rgba(255, 0, 0, 0.3) 0%, 
-        transparent 70%
-      );
-      transform: rotate(-45deg);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    &:hover::before {
-      opacity: 1;
+  `}
+  
+  ${props => props.variant === 'danger' && `
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    
+    &:hover {
+      background: rgba(239, 68, 68, 0.2);
     }
   `}
 `;
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("orders");
+  const [activeTab, setActiveTab] = useState("overview");
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -193,104 +288,178 @@ const Dashboard = () => {
     navigate("/login");
   };
 
-  return (
-    <PageContainer>
-      <GlassyNav />
-      <ShootingStars />
-      <FlickeringStars />
+  const renderContent = () => {
+    switch (activeTab) {
+      case "overview":
+        return (
+          <>
+            <StatsGrid>
+              <StatCard
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <StatLabel>Total Orders</StatLabel>
+                <StatValue>24</StatValue>
+              </StatCard>
+              <StatCard
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <StatLabel>Active Orders</StatLabel>
+                <StatValue>3</StatValue>
+              </StatCard>
+              <StatCard
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <StatLabel>Total Spent</StatLabel>
+                <StatValue>₹12,400</StatValue>
+              </StatCard>
+            </StatsGrid>
+            <ContentContainer>
+              <Title>Recent Orders</Title>
+              <Table>
+                <thead>
+                  <tr>
+                    <Th>ORDER NO</Th>
+                    <Th>DATE</Th>
+                    <Th>PAYMENT STATUS</Th>
+                    <Th>FULFILLMENT STATUS</Th>
+                    <Th>TOTAL</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map((order, index) => (
+                    <tr key={index}>
+                      <Td>{order.orderNo}</Td>
+                      <Td>{order.date}</Td>
+                      <Td><StatusBadge status={order.payment}>{order.payment}</StatusBadge></Td>
+                      <Td><StatusBadge status={order.fulfillment}>{order.fulfillment}</StatusBadge></Td>
+                      <Td>{order.total}</Td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </ContentContainer>
+          </>
+        );
 
-      <Title>DASHBOARD</Title>
-
-      <TabContainer>
-        <Tab 
-          active={activeTab === "orders"} 
-          onClick={() => setActiveTab("orders")}
-        >
-          YOUR ORDERS
-        </Tab>
-        <Tab 
-          active={activeTab === "account"} 
-          onClick={() => setActiveTab("account")}
-        >
-          ACCOUNT DETAILS
-        </Tab>
-      </TabContainer>
-
-      <ContentContainer>
-        {activeTab === "orders" ? (
-          <Table>
-            <thead>
-              <tr>
-                <Th>ORDER NO</Th>
-                <Th>DATE</Th>
-                <Th>PAYMENT STATUS</Th>
-                <Th>FULFILLMENT STATUS</Th>
-                <Th>TOTAL</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order, index) => (
-                <tr key={index}>
-                  <Td>{order.orderNo}</Td>
-                  <Td>{order.date}</Td>
-                  <Td>{order.payment}</Td>
-                  <Td>{order.fulfillment}</Td>
-                  <Td>{order.total}</Td>
+      case "orders":
+        return (
+          <ContentContainer>
+            <Title>Your Orders</Title>
+            <Table>
+              <thead>
+                <tr>
+                  <Th>ORDER NO</Th>
+                  <Th>DATE</Th>
+                  <Th>PAYMENT STATUS</Th>
+                  <Th>FULFILLMENT STATUS</Th>
+                  <Th>TOTAL</Th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-        ) : (
-          <div>
+              </thead>
+              <tbody>
+                {orders.map((order, index) => (
+                  <tr key={index}>
+                    <Td>{order.orderNo}</Td>
+                    <Td>{order.date}</Td>
+                    <Td><StatusBadge status={order.payment}>{order.payment}</StatusBadge></Td>
+                    <Td><StatusBadge status={order.fulfillment}>{order.fulfillment}</StatusBadge></Td>
+                    <Td>{order.total}</Td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </ContentContainer>
+        );
+
+      case "account":
+        return (
+          <ContentContainer>
+            <Title>Account Settings</Title>
             <FormGroup>
-              <Label>NAME*</Label>
+              <Label>Name</Label>
               <Input type="text" value={user?.name || ""} disabled />
             </FormGroup>
 
             <FormGroup>
-              <Label>AGE*</Label>
-              <Input type="number" placeholder="Enter your age" />
-            </FormGroup>
-
-            <FormGroup>
-              <Label>BIRTHDATE*</Label>
-              <Input type="date" />
-            </FormGroup>
-
-            <FormGroup>
-              <Label>EMAIL*</Label>
+              <Label>Email</Label>
               <Input type="email" value={user?.email || ""} disabled />
             </FormGroup>
 
             <FormGroup>
-              <Label>PHONE NUMBER*</Label>
+              <Label>Phone Number</Label>
               <Input type="tel" placeholder="Enter your phone number" />
             </FormGroup>
 
             <FormGroup>
-              <Label>PASSWORD*</Label>
-              <Input type="password" value="********" disabled />
+              <Label>Date of Birth</Label>
+              <Input type="date" />
             </FormGroup>
 
-            <Button 
-              variant="change-password"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              CHANGE PASSWORD
+            <Button variant="primary" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <FaEdit /> Update Profile
+            </Button>
+
+            <Button variant="secondary" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <FaKey /> Change Password
             </Button>
 
             <Button 
-              variant="logout"
+              variant="danger"
               onClick={handleLogout}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              LOGOUT
+              <FaSignOutAlt /> Logout
             </Button>
-          </div>
-        )}
-      </ContentContainer>
+          </ContentContainer>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <PageContainer>
+      <ShootingStars />
+      <FlickeringStars />
+
+      <Sidebar>
+        <UserProfile>
+          <Avatar>
+            <FaUser />
+          </Avatar>
+          <UserName>{user?.name || "User"}</UserName>
+          <UserEmail>{user?.email || "user@example.com"}</UserEmail>
+        </UserProfile>
+
+        <NavMenu>
+          <NavItem
+            active={activeTab === "overview"}
+            onClick={() => setActiveTab("overview")}
+          >
+            <FaCog /> Overview
+          </NavItem>
+          <NavItem
+            active={activeTab === "orders"}
+            onClick={() => setActiveTab("orders")}
+          >
+            <FaShoppingBag /> Orders
+          </NavItem>
+          <NavItem
+            active={activeTab === "account"}
+            onClick={() => setActiveTab("account")}
+          >
+            <FaUser /> Account
+          </NavItem>
+        </NavMenu>
+      </Sidebar>
+
+      <MainContent>
+        {renderContent()}
+      </MainContent>
     </PageContainer>
   );
 };

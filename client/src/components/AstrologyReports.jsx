@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { FaStar, FaMoon, FaChartLine, FaHeart, FaSun, FaUserFriends } from 'react-icons/fa';
+import ViewMoreButton from './ViewMoreButton';
 
 const SectionContainer = styled.section`
   padding: 8rem 2rem;
@@ -30,41 +30,63 @@ const Subtitle = styled(motion.p)`
 
 const ReportsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(3, 300px);
   gap: 2rem;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
+  justify-content: center;
   padding: 1.5rem;
   
   @media (max-width: 1200px) {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 300px);
   }
   
   @media (max-width: 768px) {
+    grid-template-columns: 300px;
+  }
+
+  @media (max-width: 400px) {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
+    padding: 1rem;
   }
 `;
 
 const ReportCard = styled(motion.div)`
   position: relative;
   width: 100%;
-  max-width: 350px;
-  min-height: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: transparent;
-  margin: 0 auto;
 `;
 
 const ImageContainer = styled.div`
-  width: 100%;
-  height: 200px;
   position: relative;
+  width: 300px;
+  height: 300px;
   margin-bottom: 2rem;
   overflow: hidden;
   border-radius: 20px;
+  
+  @media (max-width: 400px) {
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+  }
+  
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover img {
+    transform: scale(1.1);
+  }
   
   &::before {
     content: '';
@@ -75,40 +97,12 @@ const ImageContainer = styled.div`
     bottom: 0;
     background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(109, 40, 217, 0.2) 100%);
     border: 1px solid rgba(167, 139, 250, 0.3);
-    backdrop-filter: blur(8px);
     transition: all 0.3s ease;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
-    background: rgba(167, 139, 250, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     z-index: 1;
-  }
-
-  svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2.5rem;
-    color: rgba(255, 255, 255, 0.9);
-    z-index: 2;
   }
 
   &:hover::before {
     background: linear-gradient(135deg, rgba(167, 139, 250, 0.3) 0%, rgba(109, 40, 217, 0.3) 100%);
-    transform: scale(1.05);
-    box-shadow: 0 10px 30px rgba(109, 40, 217, 0.2);
   }
 `;
 
@@ -120,7 +114,7 @@ const ContentContainer = styled.div`
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
-  flex: 1;
+  min-height: 300px;
   display: flex;
   flex-direction: column;
   
@@ -166,10 +160,16 @@ const PriceTag = styled.div`
 `;
 
 const ButtonContainer = styled.div`
-  margin-top: auto;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  justify-content: center;
+  margin-top: 3rem;
+  width: 100%;
+
+  > a {
+    width: auto;
+    min-width: 200px;
+    max-width: 250px;
+  }
 `;
 
 const Button = styled(motion.button)`
@@ -194,25 +194,22 @@ const Button = styled(motion.button)`
 
 const reports = [
   {
-    icon: <FaStar />,
     title: "Comprehensive Birth Chart Report",
     description: "Get a detailed 20+ page analysis of your birth chart, including planetary positions, houses, aspects, and life path predictions. Understand your core personality, strengths, and potential challenges.",
+    price: "$199",
+    image: "https://images.unsplash.com/photo-1543722530-d2c3201371e7?w=500&auto=format&fit=crop&q=60"
+  },
+  {
+    title: "Personalized Transit Report",
+    description: "Understand how current planetary movements affect your life. Get insights into opportunities and challenges in career, relationships, and personal growth over the next 12 months.",
     price: "$149",
-    buttonText: "Get Full Report",
+    image: "https://images.unsplash.com/photo-1518141532615-4305c9f914c9?w=500&auto=format&fit=crop&q=60"
   },
   {
-    icon: <FaChartLine />,
-    title: "Yearly Forecast Report",
-    description: "A thorough analysis of your year ahead with monthly breakdowns. Covers career, relationships, finances, and personal growth through transit and progression analysis.",
+    title: "Career & Finance Forecast",
+    description: "Specialized analysis focusing on your career path and financial prospects. Learn about favorable periods for investments, job changes, and business ventures.",
     price: "$129",
-    buttonText: "See Your Year Ahead",
-  },
-  {
-    icon: <FaHeart />,
-    title: "Relationship Compatibility Report",
-    description: "In-depth synastry analysis comparing two birth charts. Understand relationship dynamics, strengths, challenges, and long-term potential through astrological compatibility.",
-    price: "$99",
-    buttonText: "Check Compatibility",
+    image: "https://images.unsplash.com/photo-1502481851512-e9e2529bfbf9?w=500&auto=format&fit=crop&q=60"
   }
 ];
 
@@ -267,12 +264,12 @@ const AstrologyReports = () => {
       >
         {reports.map((report, index) => (
           <ReportCard
-            key={report.title}
+            key={index}
             variants={cardVariants}
             custom={index}
           >
             <ImageContainer>
-              {report.icon}
+              <img src={report.image} alt={report.title} />
             </ImageContainer>
             <ContentContainer>
               <ReportTitle>{report.title}</ReportTitle>
@@ -283,13 +280,16 @@ const AstrologyReports = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {report.buttonText}
+                  Get Report
                 </Button>
               </ButtonContainer>
             </ContentContainer>
           </ReportCard>
         ))}
       </ReportsGrid>
+      <ButtonContainer>
+        <ViewMoreButton to="/numerology">View All Reports</ViewMoreButton>
+      </ButtonContainer>
     </SectionContainer>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import VideoTestimonialsCarousel from './VideoTestimonialsCarousel';
+import StarRating from './StarRating';
 
 const ReviewsSectionContainer = styled.section`
   padding: 4rem 2rem;
@@ -96,10 +97,14 @@ const ReviewerInfo = styled.div`
   }
 `;
 
-const Stars = styled.div`
-  color: #FFD700;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
+const ProductTag = styled.span`
+  background: rgba(151, 71, 255, 0.2);
+  color: #fff;
+  padding: 0.3rem 0.8rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  display: inline-block;
 `;
 
 const ReviewText = styled.p`
@@ -116,7 +121,8 @@ const reviews = [
     date: "December 15, 2023",
     rating: 5,
     text: "The birth chart analysis was incredibly accurate and insightful. It helped me understand myself better and make important life decisions.",
-    avatar: "/images/avatar1.jpg"
+    avatar: "/images/avatar1.jpg",
+    product: "Birth Chart Analysis"
   },
   {
     id: 2,
@@ -124,7 +130,8 @@ const reviews = [
     date: "December 10, 2023",
     rating: 5,
     text: "The yearly transit forecast was spot-on! It prepared me for upcoming challenges and opportunities in my career and relationships.",
-    avatar: "/images/avatar2.jpg"
+    avatar: "/images/avatar2.jpg",
+    product: "Yearly Transit Forecast"
   },
   {
     id: 3,
@@ -132,7 +139,8 @@ const reviews = [
     date: "December 5, 2023",
     rating: 5,
     text: "The relationship compatibility reading provided deep insights into my partnership. It helped us understand our dynamics better.",
-    avatar: "/images/avatar3.jpg"
+    avatar: "/images/avatar3.jpg",
+    product: "Relationship Compatibility Reading"
   },
   {
     id: 4,
@@ -140,7 +148,8 @@ const reviews = [
     date: "November 28, 2023",
     rating: 5,
     text: "Exceptional service! The predictions were accurate and the guidance helped me navigate through some challenging times.",
-    avatar: "/images/avatar4.jpg"
+    avatar: "/images/avatar4.jpg",
+    product: "Personalized Astrology Reading"
   },
   {
     id: 5,
@@ -148,7 +157,8 @@ const reviews = [
     date: "November 20, 2023",
     rating: 5,
     text: "The detailed analysis of my birth chart opened my eyes to many aspects of my personality I hadn't considered before.",
-    avatar: "/images/avatar5.jpg"
+    avatar: "/images/avatar5.jpg",
+    product: "Birth Chart Analysis"
   },
   {
     id: 6,
@@ -156,7 +166,8 @@ const reviews = [
     date: "November 15, 2023",
     rating: 5,
     text: "Very professional service. The transit forecast helped me plan my year ahead and make better decisions in my business.",
-    avatar: "/images/avatar6.jpg"
+    avatar: "/images/avatar6.jpg",
+    product: "Yearly Transit Forecast"
   },
   {
     id: 7,
@@ -164,7 +175,8 @@ const reviews = [
     date: "November 10, 2023",
     rating: 5,
     text: "The compatibility reading was eye-opening! It helped us understand our strengths and areas where we need to work together.",
-    avatar: "/images/avatar7.jpg"
+    avatar: "/images/avatar7.jpg",
+    product: "Relationship Compatibility Reading"
   },
   {
     id: 8,
@@ -172,7 +184,8 @@ const reviews = [
     date: "November 5, 2023",
     rating: 5,
     text: "Incredible accuracy in the predictions. The insights provided were practical and helped me make important life choices.",
-    avatar: "/images/avatar8.jpg"
+    avatar: "/images/avatar8.jpg",
+    product: "Personalized Astrology Reading"
   },
   {
     id: 9,
@@ -180,7 +193,8 @@ const reviews = [
     date: "October 30, 2023",
     rating: 5,
     text: "The birth chart analysis was detailed and precise. It gave me a new perspective on my life path and potential.",
-    avatar: "/images/avatar9.jpg"
+    avatar: "/images/avatar9.jpg",
+    product: "Birth Chart Analysis"
   }
 ];
 
@@ -199,11 +213,12 @@ const ReviewsSection = () => {
                 <Avatar image={review.avatar} />
                 <ReviewerInfo>
                   <h4>{review.name}</h4>
-                  <div className="date">{review.date}</div>
+                  <span className="date">{review.date}</span>
                 </ReviewerInfo>
               </ReviewHeader>
-              <Stars>{"★".repeat(review.rating)}</Stars>
+              <StarRating rating={review.rating} />
               <ReviewText>{review.text}</ReviewText>
+              <ProductTag>{review.product}</ProductTag>
             </div>
           </ReviewCard>
         ))}

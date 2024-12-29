@@ -18,6 +18,8 @@ const HeroSection = lazy(() => import('./components/HeroSection'));
 const AboutUs = lazy(() => import('./components/AboutUs'));
 const ServicesSection = lazy(() => import('./components/ServicesSection'));
 const Footer = lazy(() => import('./components/Footer'));
+const Product = lazy(() => import('./pages/Product'));
+const VastuConsultation = lazy(() => import('./pages/Product/VastuConsultation'));
 
 const App = () => {
   return (
@@ -40,6 +42,8 @@ const App = () => {
           <Route path="/astrology" element={<Astrology />} />
           <Route path="/numerology" element={<Numerology />} />
           <Route path="/vastu" element={<Vastu />} />
+          <Route path="/product" element={<Product />} />
+          <Route path="/product/vastu-consultation" element={<VastuConsultation />} />
           <Route
             path="/dashboard"
             element={

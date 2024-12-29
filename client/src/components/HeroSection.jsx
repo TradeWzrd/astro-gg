@@ -8,27 +8,30 @@ const rotate = keyframes`
 `;
 
 const HeroContainer = styled.div`
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-bottom: 4rem;
+  margin-bottom: 2rem;
 `;
 
 const SolarSystem = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
-  transform: scale(1.8);
+  transform: scale(1.5);
+  margin-bottom: 2rem;
 
   @media (max-width: 1024px) {
-    transform: scale(1.4);
+    transform: scale(1.2);
   }
 
   @media (max-width: 768px) {
-    transform: scale(1);
+    transform: scale(0.9);
   }
 `;
 
@@ -80,19 +83,19 @@ const createPlanetStyles = (orbitSize, planetSize, revolutionTime) => {
   };
 };
 
-// Planet configurations
-const mercuryStyles = createPlanetStyles(100, 6, 2.9);
-const venusStyles = createPlanetStyles(140, 10, 7.4);
-const earthStyles = createPlanetStyles(200, 8, 12);
-const marsStyles = createPlanetStyles(260, 8, 22.5);
-const jupiterStyles = createPlanetStyles(420, 24, 142);
-const saturnStyles = createPlanetStyles(540, 16, 354);
-const uranusStyles = createPlanetStyles(640, 14, 1008);
-const neptuneStyles = createPlanetStyles(780, 14, 1977);
+// Planet configurations - Increased revolution times by 50% for more serene movement
+const mercuryStyles = createPlanetStyles(100, 6, 4.35); 
+const venusStyles = createPlanetStyles(140, 10, 11.1); 
+const earthStyles = createPlanetStyles(200, 8, 18); 
+const marsStyles = createPlanetStyles(260, 8, 33.75); 
+const jupiterStyles = createPlanetStyles(420, 24, 213); 
+const saturnStyles = createPlanetStyles(540, 16, 531); 
+const uranusStyles = createPlanetStyles(640, 14, 1512); 
+const neptuneStyles = createPlanetStyles(780, 14, 2965.5); 
 
 const HeroContent = styled.div`
   position: absolute;
-  top: 65%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;

@@ -1,13 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { FaHashtag, FaInfinity, FaCompass } from 'react-icons/fa';
+import ViewMoreButton from './ViewMoreButton';
 
 const SectionContainer = styled.section`
-  padding: 8rem 2rem;
+  padding: 6rem 2rem 3rem 2rem;
   position: relative;
   background: linear-gradient(180deg, rgba(18, 0, 47, 0) 0%, rgba(41, 0, 78, 0.1) 100%);
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,39 +33,63 @@ const Subtitle = styled(motion.p)`
 
 const ReportsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(3, 300px);
   gap: 2rem;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
+  justify-content: center;
   padding: 1.5rem;
   
   @media (max-width: 1200px) {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 300px);
   }
   
   @media (max-width: 768px) {
+    grid-template-columns: 300px;
+  }
+
+  @media (max-width: 400px) {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
+    padding: 1rem;
   }
 `;
 
 const ReportCard = styled(motion.div)`
   position: relative;
-  width: 350px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: transparent;
-  height: 100%;
 `;
 
 const ImageContainer = styled.div`
-  width: 100%;
-  height: 200px;
   position: relative;
+  width: 300px;
+  height: 300px;
   margin-bottom: 2rem;
   overflow: hidden;
   border-radius: 20px;
+  
+  @media (max-width: 400px) {
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+  }
+  
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover img {
+    transform: scale(1.1);
+  }
   
   &::before {
     content: '';
@@ -77,40 +100,12 @@ const ImageContainer = styled.div`
     bottom: 0;
     background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(109, 40, 217, 0.2) 100%);
     border: 1px solid rgba(167, 139, 250, 0.3);
-    backdrop-filter: blur(8px);
     transition: all 0.3s ease;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
-    background: rgba(167, 139, 250, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     z-index: 1;
-  }
-
-  svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2.5rem;
-    color: rgba(255, 255, 255, 0.9);
-    z-index: 2;
   }
 
   &:hover::before {
     background: linear-gradient(135deg, rgba(167, 139, 250, 0.3) 0%, rgba(109, 40, 217, 0.3) 100%);
-    transform: scale(1.05);
-    box-shadow: 0 10px 30px rgba(109, 40, 217, 0.2);
   }
 `;
 
@@ -122,7 +117,7 @@ const ContentContainer = styled.div`
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
-  height: 100%;
+  min-height: 300px;
   display: flex;
   flex-direction: column;
   
@@ -187,6 +182,12 @@ const Button = styled(motion.button)`
   }
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+`;
+
 const containerVariants = {
   hidden: {
     opacity: 0,
@@ -228,61 +229,41 @@ const cardVariants = {
 
 const reports = [
   {
-    icon: <FaHashtag />,
     title: "Life Path Number Analysis",
-    description: "Discover your core life purpose and destiny through a comprehensive birth date analysis. Understand your personality traits, strengths, and life lessons through numerology.",
-    price: "$99",
-    buttonText: "Get Your Number",
+    description: "Discover your life's purpose and potential through your Life Path Number. Get detailed insights about your personality traits, career paths, and life lessons.",
+    price: "$89",
+    image: "https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=500&auto=format&fit=crop&q=60"
   },
   {
-    icon: <FaInfinity />,
-    title: "Yearly Numerology Forecast",
-    description: "Get detailed predictions for your personal year cycles. Learn about upcoming opportunities, challenges, and the best timing for major life decisions.",
+    title: "Personal Year Forecast",
+    description: "Understand the energies and opportunities of your current personal year cycle. Get month-by-month predictions and guidance for making the most of your year.",
     price: "$79",
-    buttonText: "See Your Year",
+    image: "https://images.unsplash.com/photo-1505506874110-6a7a69069a08?w=500&auto=format&fit=crop&q=60"
   },
   {
-    icon: <FaCompass />,
-    title: "Name Numerology Report",
-    description: "Analyze the vibrational energy of your name and its influence on your life. Includes destiny number, soul urge number, and personality number interpretations.",
+    title: "Name Analysis Report",
+    description: "Learn how your name influences your life. Get insights into your Expression, Soul Urge, and Personality numbers and how they shape your destiny.",
     price: "$69",
-    buttonText: "Analyze Name",
+    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=60"
   }
 ];
 
 const NumerologyReports = () => {
   return (
     <SectionContainer>
-      <Title
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-      >
-        Numerology Reports
-      </Title>
-      <Subtitle
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.2 }}
-      >
+      <Title>Numerology Reports</Title>
+      <Subtitle>
         Unlock the hidden meanings in your numbers and discover your life's path
       </Subtitle>
-      <ReportsGrid
-        as={motion.div}
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-      >
+      <ReportsGrid>
         {reports.map((report, index) => (
           <ReportCard
-            key={report.title}
+            key={index}
             variants={cardVariants}
             custom={index}
           >
             <ImageContainer>
-              {report.icon}
+              <img src={report.image} alt={report.title} />
             </ImageContainer>
             <ContentContainer>
               <ReportTitle>{report.title}</ReportTitle>
@@ -292,12 +273,15 @@ const NumerologyReports = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {report.buttonText}
+                Get Report
               </Button>
             </ContentContainer>
           </ReportCard>
         ))}
       </ReportsGrid>
+      <ButtonContainer>
+        <ViewMoreButton to="/astrology">View All Reports</ViewMoreButton>
+      </ButtonContainer>
     </SectionContainer>
   );
 };

@@ -89,14 +89,14 @@ const generateRandomPosition = () => {
   // Random position across entire viewport
   const top = Math.random() * 100; // 0-100vh
   const right = Math.random() * 30 - 10; // -10 to 20vw (starts slightly off-screen)
-  const duration = Math.random() * 2 + 3; // 3-5 seconds
-  const delay = Math.random() * 20; // 0-20 seconds delay
+  const duration = Math.random() * 3 + 5; // 5-8 seconds
+  const delay = Math.random() * 30; // 0-30 seconds delay
   
   return { top, right, duration, delay };
 };
 
 const ShootingStars = () => {
-  const stars = Array.from({ length: 6 }, (_, i) => ({
+  const stars = Array.from({ length: 4 }, (_, i) => ({
     id: i,
     ...generateRandomPosition()
   }));

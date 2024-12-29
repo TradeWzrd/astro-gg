@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import ViewMoreButton from './ViewMoreButton';
 
 const SectionContainer = styled.section`
   padding: 6rem 0;
@@ -25,84 +26,110 @@ const SectionSubtitle = styled(motion.p)`
   margin-bottom: 8rem;
 `;
 
-const ServicesGrid = styled.div`
+const ServicesGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 4rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 3rem;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 2rem;
+  
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 300px);
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 300px;
+  }
 
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
+  @media (max-width: 400px) {
+    grid-template-columns: 1fr;
+    padding: 1rem;
   }
 `;
 
 const ServiceCardWrapper = styled(motion.div)`
   position: relative;
-  padding-top: 8rem;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 220px;
+  margin-bottom: 1rem;
 `;
 
 const IconContainer = styled.div`
   position: absolute;
   top: 0;
   left: 50%;
-  transform: translateX(-50%) translateY(-50%);
-  width: 100%;
-  height: 220px;
-  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  transform: translateX(-50%);
+  width: 240px;
+  height: 200px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  z-index: 2;
   overflow: hidden;
+  z-index: 2;
+  margin-bottom: 30px;
+  
+  @media (max-width: 400px) {
+    width: 200px;
+    height: 160px;
+  }
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.8;
-    transition: all 0.3s ease;
+    opacity: 0.9;
+    transform: rotate(180deg) scale(1.5);
+    transition: transform 0.3s ease;
   }
 
-  &::after {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.2));
-    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-    z-index: -1;
-    filter: blur(1px);
+  &:hover img {
+    transform: rotate(180deg) scale(1.6);
+    opacity: 1;
   }
 
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, 
-      rgba(0,0,0,0.2),
-      rgba(0,0,0,0.1)
-    );
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(109, 40, 217, 0.2) 100%);
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    transition: all 0.3s ease;
     z-index: 1;
+  }
+
+  &:hover::before {
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.3) 0%, rgba(109, 40, 217, 0.3) 100%);
   }
 `;
 
-const ServiceCard = styled(motion.div)`
-  background: rgba(255, 255, 255, 0.05);
+const ServiceCard = styled.div`
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  min-height: 400px;
   width: 100%;
-  position: relative;
-  margin-top: 0;
+  min-height: 300px;
+  z-index: 1;
+  margin-top: 30px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+  }
 `;
 
 const ServiceTitle = styled.h3`
@@ -148,27 +175,33 @@ const Button = styled(motion.button)`
   }
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+`;
+
 const services = [
   {
     title: "Comprehensive Birth Chart Analysis",
     description: "Get a detailed analysis of your natal chart, including planetary positions, aspects, and houses. Understand your personality traits, strengths, and life path through Vedic astrology.",
     price: "$149",
     buttonText: "Get Your Report",
-    image: "/images/birth-chart.jpg" 
+    image: "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?w=500&auto=format&fit=crop&q=60" // Celestial image
   },
   {
     title: "Yearly Transit Forecast",
     description: "Discover what the stars have planned for your year ahead. Get detailed predictions about career, relationships, health, and finances based on planetary transits and dashas.",
     price: "$129",
     buttonText: "See Your Future",
-    image: "/images/transit-forecast.jpg"
+    image: "https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=500&auto=format&fit=crop&q=60" // Night sky with stars
   },
   {
     title: "Relationship Compatibility",
     description: "Discover what the stars have planned for your year ahead. Get detailed predictions about career, relationships, health, and finances based on planetary transits and dashas.",
     price: "$99",
     buttonText: "Check Compatibility",
-    image: "/images/compatibility.jpg"
+    image: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=500&auto=format&fit=crop&q=60" // Galaxy image
   }
 ];
 
@@ -254,6 +287,9 @@ const ServicesSection = () => {
           </ServiceCardWrapper>
         ))}
       </ServicesGrid>
+      <ButtonContainer>
+        <ViewMoreButton to="/vastu">View All Services</ViewMoreButton>
+      </ButtonContainer>
     </SectionContainer>
   );
 };

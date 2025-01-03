@@ -21,7 +21,9 @@ import ButtonComponent from "./pages/ButtonComponent";
 import PhonePeApi from "./components/PhonePe";
 import PayINComponent from "./components/PayInApi";
 import AboutUs from "./pages/AboutUs"; 
-import ContactUs from "./pages/ContactUs"; // Added import statement for ContactUs page
+import ContactUs from "./pages/ContactUs"; 
+import DemoBlog from "./pages/DemoBlog";
+import GlassyNav from "./components/GlassyNav";
 import GlobalStyles from './styles/GlobalStyles';
 
 function App() {
@@ -36,6 +38,7 @@ function App() {
       </div>
       <div className="font-bold">
         <GlobalStyles />
+        <GlassyNav />
         <Routes>
           <Route path="/bb" element={<PayINComponent/>}/>
           <Route path="/" element={<Home/>}/>
@@ -48,13 +51,12 @@ function App() {
           <Route path='/invoice' element={<Invoice/>}/>
           <Route path='/cart' element={<Cart/>}/>
           <Route path="/cart-manegar" element={<CartManager/>}/>
-          <Route path='/astrology' element={<Astrology/>}/>
-          <Route path='/about' element={<AboutUs/>}/>
-          <Route path='/contact' element={<ContactUs/>}/>
-          <Route path='/vastu-page/:id' element={<VastuPage/>}/>
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path='/astroSingle' element={<AstroPage2/>}/>
           <Route path="/triangle" element={<TriangularCarousel/>}/>
+          <Route path="/demo-blog" element={<DemoBlog/>}/>
+          <Route path="/about" element={<AboutUs/>}/>
+          <Route path="/contact" element={<ContactUs/>}/>
         </Routes>
         <Footer/>
       </div>

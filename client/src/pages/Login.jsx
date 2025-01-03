@@ -206,6 +206,24 @@ const ForgotPassword = styled(Link)`
   }
 `;
 
+const DemoCredentials = styled.div`
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  color: #a78bfa;
+  font-size: 0.9rem;
+
+  h4 {
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin: 0.25rem 0;
+  }
+`;
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -301,6 +319,12 @@ const Login = () => {
               )}
             </LoginButton>
           </Form>
+
+          <DemoCredentials>
+            <h4>Demo Accounts</h4>
+            <p>Admin - admin@demo.com / admin123</p>
+            <p>User - test123@gmail.com / test123</p>
+          </DemoCredentials>
 
           <Divider>Or continue with</Divider>
 

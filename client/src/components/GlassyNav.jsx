@@ -37,14 +37,20 @@ const GlassyNavContainer = styled(motion.div)`
   }
 `;
 
-const Logo = styled(Link)`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: white;
+const LogoContainer = styled(Link)`
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  background: linear-gradient(to right, #fff, #a78bfa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+`;
+
+const LogoImage = styled.img`
+  height: 40px;
+  width: auto;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 const NavItems = styled.div`
@@ -74,7 +80,7 @@ const MobileMenu = styled(motion.div)`
   display: none;
   
   @media (max-width: 768px) {
-    display: ${props => props.isOpen ? 'flex' : 'none'};
+    display: ${({ $isOpen }) => ($isOpen ? 'flex' : 'none')};
     position: fixed;
     top: 160px;
     left: 1rem;
@@ -210,12 +216,15 @@ const GlassyNav = () => {
   return (
     <NavWrapper>
       <GlassyNavContainer>
-        <Logo to="/">Astrology</Logo>
+        <LogoContainer to="/">
+          <LogoImage src="/assets/logo.svg" alt="Astrology Logo" />
+        </LogoContainer>
         <NavItems>
           <NavItem to="/">Home</NavItem>
           <NavItem to="/astrology">Astrology</NavItem>
           <NavItem to="/vastu">Vastu</NavItem>
           <NavItem to="/numerology">Numerology</NavItem>
+          <NavItem to="/demo-blog">Blog</NavItem>
           <NavItem to="/about">About</NavItem>
           <NavItem to="/contact">Contact</NavItem>
         </NavItems>
@@ -276,7 +285,7 @@ const GlassyNav = () => {
       </GlassyNavContainer>
 
       <MobileMenu 
-        isOpen={isMobileMenuOpen}
+        $isOpen={isMobileMenuOpen}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: isMobileMenuOpen ? 1 : 0, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
@@ -285,6 +294,7 @@ const GlassyNav = () => {
         <NavItem to="/astrology">Astrology</NavItem>
         <NavItem to="/vastu">Vastu</NavItem>
         <NavItem to="/numerology">Numerology</NavItem>
+        <NavItem to="/demo-blog">Blog</NavItem>
         <NavItem to="/about">About</NavItem>
         <NavItem to="/contact">Contact</NavItem>
       </MobileMenu>

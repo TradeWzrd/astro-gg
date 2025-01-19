@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { loginUser } from '../store/authSlice';
+import { loginUser } from '../Redux/AuthSlice';
 import { toast } from 'react-hot-toast';
 import { FaEnvelope, FaLock, FaGoogle, FaFacebook } from 'react-icons/fa';
 import ShootingStars from '../components/ShootingStars';

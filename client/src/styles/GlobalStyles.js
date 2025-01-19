@@ -8,10 +8,22 @@ const GlobalStyles = createGlobalStyle`
     font-family: 'Poppins', sans-serif;
   }
 
+  html {
+    height: 100%;
+  }
+
   body {
     background: #12002f;
     color: white;
     overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  #root {
+    min-height: 100vh;
+    position: relative;
+    z-index: 0;
   }
 
   button {
@@ -26,6 +38,36 @@ const GlobalStyles = createGlobalStyle`
   p {
     font-family: 'Poppins', sans-serif;
     font-weight: 400;
+  }
+
+  .section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .stars-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle ease infinite;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
   }
 `;
 

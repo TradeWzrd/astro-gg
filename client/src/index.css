@@ -1,3 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Poppins', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-gradient-to-t from-secondary-light to-secondary;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+      'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: white;
+  }
+
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  }
+}
+
+/* Custom utility classes */
+@layer utilities {
+  .glassmorphism {
+    @apply backdrop-blur-lg bg-white/10 border border-white/20;
+  }
+}
+
+/* Custom animations */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: translate(0, 0) rotate(-45deg) scale(0);
+    opacity: 0;
+  }
+  5% {
+    transform: translate(0, 0) rotate(-45deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-200vh, 200vh) rotate(-45deg) scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-light;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -22,6 +99,8 @@ body {
   height: 100vh;
   pointer-events: none;
   z-index: 1;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* Left side glow */
@@ -38,6 +117,8 @@ body {
     transparent 70%
   );
   animation: glowPulse 8s infinite alternate;
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
 /* Right side glow */
@@ -54,6 +135,8 @@ body {
     transparent 70%
   );
   animation: glowPulse 8s infinite alternate-reverse;
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
 /* Top center glow */
@@ -147,30 +230,8 @@ body {
   z-index: 2;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(45, 27, 105, 0.1);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(45, 27, 105, 0.8);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(45, 27, 105, 1);
 }

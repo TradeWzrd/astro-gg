@@ -4,19 +4,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from "styled-components";
 import { FaShoppingCart, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import { logout } from '../store/authSlice';
+import { logoutUser } from '../Redux/AuthSlice';
 import { toast } from 'react-hot-toast';
 
-const NavWrapper = styled(motion.div)`
+const MotionNav = motion.create(styled.nav`
   position: fixed;
   top: 80px;
   left: 0;
   right: 0;
   z-index: 1000;
   padding: 1rem;
-`;
+`);
 
-const GlassyNavContainer = styled(motion.div)`
+const MotionContainer = motion.create(styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -35,7 +35,7 @@ const GlassyNavContainer = styled(motion.div)`
     padding: 1rem;
     border-radius: 12px;
   }
-`;
+`);
 
 const LogoContainer = styled(Link)`
   display: flex;
@@ -43,7 +43,10 @@ const LogoContainer = styled(Link)`
   text-decoration: none;
 `;
 
-const LogoImage = styled.img`
+const LogoImage = styled.img.attrs(props => ({
+  src: props.$src || '/logo.png',
+  alt: props.$alt || 'Logo'
+}))`
   height: 40px;
   width: auto;
   transition: transform 0.3s ease;
@@ -96,45 +99,69 @@ const MobileMenu = styled(motion.div)`
   }
 `;
 
-const NavItem = styled(motion(Link))`
+const NavLink = motion.create(styled(Link)`
   color: white;
   text-decoration: none;
   font-weight: 500;
   position: relative;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  transition: color 0.3s ease;
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, #a78bfa, #6d28d9);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
   }
 
-  &.active {
-    background: rgba(255, 255, 255, 0.1);
+  &:hover {
+    color: #a78bfa;
+    &::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
   }
 
   @media (max-width: 768px) {
     padding: 1rem;
     width: 100%;
     text-align: center;
-  }
-`;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-const IconContainer = styled.div`
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+`);
+
+const NavIconsContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
 `;
 
-const IconButton = styled(motion.div)`
-  position: relative;
+const IconButton = motion.create(styled.button`
+  background: none;
+  border: none;
+  color: white;
   cursor: pointer;
   padding: 0.5rem;
-  color: white;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-`;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #a78bfa;
+  }
+`);
 
 const CartCount = styled.span`
   position: absolute;
@@ -195,7 +222,7 @@ const GlassyNav = () => {
   const cartItemCount = cartItems ? cartItems.reduce((total, item) => total + item.quantity, 0) : 0;
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logoutUser());
     toast.success('Logged out successfully');
     navigate('/login');
     setShowUserMenu(false);
@@ -214,21 +241,67 @@ const GlassyNav = () => {
   };
 
   return (
-    <NavWrapper>
-      <GlassyNavContainer>
+    <MotionNav
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <MotionContainer>
         <LogoContainer to="/">
-          <LogoImage src="/assets/logo.svg" alt="Astrology Logo" />
+          <LogoImage $src="/assets/logo.svg" $alt="Astrology Logo" />
         </LogoContainer>
         <NavItems>
-          <NavItem to="/">Home</NavItem>
-          <NavItem to="/astrology">Astrology</NavItem>
-          <NavItem to="/vastu">Vastu</NavItem>
-          <NavItem to="/numerology">Numerology</NavItem>
-          <NavItem to="/demo-blog">Blog</NavItem>
-          <NavItem to="/about">About</NavItem>
-          <NavItem to="/contact">Contact</NavItem>
+          <NavLink
+            to="/"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/astrology"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Astrology
+          </NavLink>
+          <NavLink
+            to="/vastu"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Vastu
+          </NavLink>
+          <NavLink
+            to="/numerology"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Numerology
+          </NavLink>
+          <NavLink
+            to="/demo-blog"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Blog
+          </NavLink>
+          <NavLink
+            to="/about"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            About
+          </NavLink>
+          <NavLink
+            to="/contact"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Contact
+          </NavLink>
         </NavItems>
-        <IconContainer>
+        <NavIconsContainer>
           <Link to="/cart">
             <IconButton
               whileHover={{ scale: 1.1 }}
@@ -278,11 +351,11 @@ const GlassyNav = () => {
               )}
             </AnimatePresence>
           </UserContainer>
-        </IconContainer>
+        </NavIconsContainer>
         <MobileMenuButton onClick={toggleMobileMenu}>
           <span>☰</span>
         </MobileMenuButton>
-      </GlassyNavContainer>
+      </MotionContainer>
 
       <MobileMenu 
         $isOpen={isMobileMenuOpen}
@@ -290,15 +363,15 @@ const GlassyNav = () => {
         animate={{ opacity: isMobileMenuOpen ? 1 : 0, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
       >
-        <NavItem to="/">Home</NavItem>
-        <NavItem to="/astrology">Astrology</NavItem>
-        <NavItem to="/vastu">Vastu</NavItem>
-        <NavItem to="/numerology">Numerology</NavItem>
-        <NavItem to="/demo-blog">Blog</NavItem>
-        <NavItem to="/about">About</NavItem>
-        <NavItem to="/contact">Contact</NavItem>
+        <NavLink to="/">Home</NavLink>
+        <NavLink to="/astrology">Astrology</NavLink>
+        <NavLink to="/vastu">Vastu</NavLink>
+        <NavLink to="/numerology">Numerology</NavLink>
+        <NavLink to="/demo-blog">Blog</NavLink>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/contact">Contact</NavLink>
       </MobileMenu>
-    </NavWrapper>
+    </MotionNav>
   );
 };
 

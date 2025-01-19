@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FaPhone, FaWhatsapp, FaCalendarAlt, FaArrowUp } from 'react-icons/fa';
 import GlassyNav from "../components/GlassyNav";
 import HeroSection from "../components/HeroSection";
@@ -18,108 +19,110 @@ import ShootingStars from '../components/ShootingStars';
 import FlickeringStars from '../components/FlickeringStars';
 import ReviewsSection from '../components/ReviewsSection';
 
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
+
 const PageContainer = styled.div`
   background: linear-gradient(to top, #332BA3 0%, #1E0038 100%);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  z-index: 0;
+`;
+
+const ContentWrapper = styled(motion.div)`
+  position: relative;
+  z-index: 1;
+  width: 100%;
 `;
 
 const StarsContainer = styled.div`
   position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
   z-index: 0;
 `;
 
-const Star = styled.div`
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  opacity: ${props => props.opacity};
-  animation: twinkle ${props => props.duration}s infinite;
-
-  @keyframes twinkle {
-    0%, 100% { opacity: ${props => props.opacity}; }
-    50% { opacity: 0.2; }
-  }
-`;
-
 const FloatingMenu = styled(motion.div)`
   position: fixed;
-  right: 2rem;
   bottom: 2rem;
+  right: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  z-index: 100;
+  z-index: 1000;
 `;
 
-const FloatingButton = styled(motion.button)`
+const MenuButton = styled(motion.button)`
   width: 50px;
   height: 50px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1.2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    transform: scale(1.1);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
   }
 `;
 
-const ScrollToTop = styled(motion.button)`
-  position: fixed;
-  bottom: 2rem;
-  left: 2rem;
-  width: 45px;
-  height: 45px;
+const ScrollToTopButton = styled(motion.button).attrs(props => ({
+  style: {
+    opacity: props.$isVisible ? 1 : 0,
+    pointerEvents: props.$isVisible ? 'auto' : 'none'
+  }
+}))`
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: none;
+  background: linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 100;
-  opacity: ${props => props.visible ? 1 : 0};
-  pointer-events: ${props => props.visible ? 'all' : 'none'};
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    transform: scale(1.1);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
   }
 `;
 
-const QuickContact = styled(motion.div)`
-  position: fixed;
-  right: 5rem;
-  bottom: ${props => props.index * 4 + 2}rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+const QuickContact = styled(motion.div).attrs(props => ({
+  style: {
+    opacity: props.$show ? 1 : 0,
+    transform: `translateX(${props.$show ? '0' : '20px'})`,
+    pointerEvents: props.$show ? 'auto' : 'none'
+  }
+}))`
+  position: absolute;
+  right: calc(100% + 1rem);
+  background: rgba(0, 0, 0, 0.8);
   padding: 0.5rem 1rem;
   border-radius: 20px;
   color: white;
   font-size: 0.9rem;
-  pointer-events: ${props => props.show ? 'all' : 'none'};
-  opacity: ${props => props.show ? 1 : 0};
-  transform: translateX(${props => props.show ? '0' : '20px'});
   transition: all 0.3s ease;
   z-index: 99;
   white-space: nowrap;
@@ -200,14 +203,12 @@ const Home = () => {
         {isLoading && <LoadingScreen />}
       </AnimatePresence>
       
+      <StarsContainer className="stars-container" />
       <FlickeringStars />
       <ShootingStars />
       <ScrollProgress />
       
-      <StarsContainer className="stars-container" />
-      <GlassyNav />
-      
-      <motion.div
+      <ContentWrapper
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
@@ -245,7 +246,7 @@ const Home = () => {
         <motion.div className="section">
           <Vlogs />
         </motion.div>
-      </motion.div>
+      </ContentWrapper>
 
       <FloatingMenu
         initial={{ opacity: 0, y: 20 }}
@@ -253,25 +254,25 @@ const Home = () => {
         transition={{ delay: 1 }}
       >
         <QuickContact 
-          show={hoveredButton === 'phone'} 
+          $show={hoveredButton === 'phone'} 
           index={2}
         >
           Call us now
         </QuickContact>
         <QuickContact 
-          show={hoveredButton === 'whatsapp'} 
+          $show={hoveredButton === 'whatsapp'} 
           index={1}
         >
           Chat on WhatsApp
         </QuickContact>
         <QuickContact 
-          show={hoveredButton === 'calendar'} 
+          $show={hoveredButton === 'calendar'} 
           index={0}
         >
           Book a consultation
         </QuickContact>
 
-        <FloatingButton
+        <MenuButton
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           onHoverStart={() => setHoveredButton('phone')}
@@ -279,9 +280,9 @@ const Home = () => {
           onClick={() => handleContact('phone')}
         >
           <FaPhone />
-        </FloatingButton>
+        </MenuButton>
         
-        <FloatingButton
+        <MenuButton
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           onHoverStart={() => setHoveredButton('whatsapp')}
@@ -289,9 +290,9 @@ const Home = () => {
           onClick={() => handleContact('whatsapp')}
         >
           <FaWhatsapp />
-        </FloatingButton>
+        </MenuButton>
         
-        <FloatingButton
+        <MenuButton
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           onHoverStart={() => setHoveredButton('calendar')}
@@ -299,17 +300,19 @@ const Home = () => {
           onClick={() => handleContact('calendar')}
         >
           <FaCalendarAlt />
-        </FloatingButton>
+        </MenuButton>
       </FloatingMenu>
 
-      <ScrollToTop
-        visible={showScrollTop}
+      <ScrollToTopButton
+        $isVisible={showScrollTop}
         onClick={scrollToTop}
         whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
+        initial={false}
+        animate={{ opacity: showScrollTop ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
       >
         <FaArrowUp />
-      </ScrollToTop>
+      </ScrollToTopButton>
     </PageContainer>
   );
 };

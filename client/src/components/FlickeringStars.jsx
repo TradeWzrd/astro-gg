@@ -22,18 +22,22 @@ const StarContainer = styled.div`
   z-index: 0;
 `;
 
-const Star = styled.div`
+const Star = styled.div.attrs(props => ({
+  style: {
+    width: `${props.$size}px`,
+    height: `${props.$size}px`,
+    top: `${props.$top}vh`,
+    left: `${props.$left}vw`,
+    animationDuration: `${props.$duration}s`,
+    animationDelay: `${props.$delay}s`,
+    boxShadow: `0 0 ${props.$size * 2}px ${props.$size/2}px rgba(255, 255, 255, 0.3)`
+  }
+}))`
   position: absolute;
-  width: ${props => props.size}px;
-  height: ${props => props.size}px;
   background: white;
   border-radius: 50%;
-  top: ${props => props.top}vh;
-  left: ${props => props.left}vw;
-  animation: ${twinkle} ${props => props.duration}s ease-in-out infinite;
-  animation-delay: ${props => props.delay}s;
   opacity: 0.2;
-  box-shadow: 0 0 ${props => props.size * 2}px ${props => props.size/2}px rgba(255, 255, 255, 0.3);
+  animation: ${twinkle} ease-in-out infinite;
 
   &::after {
     content: '';
@@ -48,30 +52,24 @@ const Star = styled.div`
   }
 `;
 
-const generateRandomStar = () => {
-  return {
-    top: Math.random() * 100,
-    left: Math.random() * 100,
-    size: Math.random() * 2 + 1, // 1-3px
-    duration: Math.random() * 3 + 2, // 2-5s
-    delay: Math.random() * 5 // 0-5s delay
-  };
-};
+const generateRandomStar = () => ({
+  $top: Math.random() * 100,
+  $left: Math.random() * 100,
+  $size: Math.random() * 2 + 1, // 1-3px
+  $duration: Math.random() * 3 + 2, // 2-5s
+  $delay: Math.random() * 5 // 0-5s delay
+});
 
 const FlickeringStars = () => {
-  // Generate more stars for a denser sky
-  const stars = Array.from({ length: 100 }, () => generateRandomStar());
+  // Generate stars for a dense sky
+  const stars = Array.from({ length: 100 }, generateRandomStar);
 
   return (
     <StarContainer>
       {stars.map((star, index) => (
         <Star
           key={index}
-          top={star.top}
-          left={star.left}
-          size={star.size}
-          duration={star.duration}
-          delay={star.delay}
+          {...star}
         />
       ))}
     </StarContainer>

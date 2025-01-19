@@ -61,12 +61,17 @@ const BlogCard = styled(motion.div)`
   }
 `;
 
-const BlogImage = styled.div`
+const BlogImage = styled.div.attrs(props => ({
+  style: {
+    backgroundImage: `url(${props.$image})`
+  }
+}))`
   width: 100%;
-  height: 50%;
-  background-image: url(${props => props.image});
+  height: 200px;
   background-size: cover;
   background-position: center;
+  border-radius: 8px 8px 0 0;
+  transition: transform 0.3s ease;
 `;
 
 const BlogContent = styled.div`
@@ -145,12 +150,16 @@ const PopupContent = styled(motion.div)`
   }
 `;
 
-const PopupImage = styled.div`
+const PopupImage = styled.div.attrs(props => ({
+  style: {
+    backgroundImage: `url(${props.$image})`
+  }
+}))`
   width: 100%;
   height: 300px;
-  background-image: url(${props => props.image});
   background-size: cover;
   background-position: center;
+  border-radius: 8px 8px 0 0;
 `;
 
 const PopupBody = styled.div`
@@ -298,7 +307,7 @@ const Blog = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <BlogImage image={post.image} />
+                <BlogImage $image={post.image} />
                 <BlogContent>
                   <BlogTitle>{post.title}</BlogTitle>
                   <BlogExcerpt>{post.excerpt}</BlogExcerpt>
@@ -332,7 +341,7 @@ const Blog = () => {
                   >
                     <FaTimes />
                   </CloseButton>
-                  <PopupImage image={selectedBlog.image} />
+                  <PopupImage $image={selectedBlog.image} />
                   <PopupBody>
                     <PopupTitle>{selectedBlog.title}</PopupTitle>
                     <BlogMeta style={{ marginBottom: '1.5rem' }}>

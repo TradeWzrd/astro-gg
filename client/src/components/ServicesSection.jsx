@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import ViewMoreButton from './ViewMoreButton';
@@ -7,6 +7,7 @@ const SectionContainer = styled.section`
   padding: 6rem 0;
   position: relative;
   background: linear-gradient(180deg, rgba(18, 0, 47, 0) 0%, rgba(41, 0, 78, 0.1) 100%);
+  contain: content;
 `;
 
 const SectionTitle = styled(motion.h2)`
@@ -17,6 +18,7 @@ const SectionTitle = styled(motion.h2)`
   background: linear-gradient(to right, #fff, #a78bfa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  contain: content;
 `;
 
 const SectionSubtitle = styled(motion.p)`
@@ -24,6 +26,7 @@ const SectionSubtitle = styled(motion.p)`
   text-align: center;
   font-size: 1.2rem;
   margin-bottom: 8rem;
+  contain: content;
 `;
 
 const ServicesGrid = styled(motion.div)`
@@ -34,6 +37,7 @@ const ServicesGrid = styled(motion.div)`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  contain: content;
   
   @media (max-width: 1200px) {
     grid-template-columns: repeat(2, 300px);
@@ -57,6 +61,7 @@ const ServiceCardWrapper = styled(motion.div)`
   align-items: center;
   padding-top: 220px;
   margin-bottom: 1rem;
+  contain: content;
 `;
 
 const IconContainer = styled.div`
@@ -80,7 +85,7 @@ const IconContainer = styled.div`
     width: 200px;
     height: 160px;
   }
-
+  
   img {
     width: 100%;
     height: 100%;
@@ -229,7 +234,7 @@ const cardVariants = {
   }
 };
 
-const ServicesSection = () => {
+const ServicesSection = memo(() => {
   return (
     <SectionContainer>
       <SectionTitle
@@ -292,6 +297,6 @@ const ServicesSection = () => {
       </ButtonContainer>
     </SectionContainer>
   );
-};
+});
 
 export default ServicesSection;

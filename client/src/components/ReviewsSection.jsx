@@ -71,14 +71,18 @@ const ReviewHeader = styled.div`
   margin-bottom: 1.5rem;
 `;
 
-const Avatar = styled.div`
-  width: 3.5rem;
-  height: 3.5rem;
+const Avatar = styled.div.attrs(props => ({
+  style: {
+    backgroundImage: `url(${props.$image})`
+  }
+}))`
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background-image: url(${props => props.image});
   background-size: cover;
   background-position: center;
-  border: 2px solid #9747FF;
+  border: 2px solid #a78bfa;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
 const ReviewerInfo = styled.div`
@@ -210,7 +214,7 @@ const ReviewsSection = () => {
           <ReviewCard key={review.id}>
             <div>
               <ReviewHeader>
-                <Avatar image={review.avatar} />
+                <Avatar $image={review.avatar} />
                 <ReviewerInfo>
                   <h4>{review.name}</h4>
                   <span className="date">{review.date}</span>

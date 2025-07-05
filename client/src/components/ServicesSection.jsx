@@ -242,6 +242,7 @@ const cardVariants = {
 };
 
 const ServicesSection = memo(() => {
+<<<<<<< HEAD
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isAuthenticated } = useSelector(state => state.auth);
@@ -261,6 +262,8 @@ const ServicesSection = memo(() => {
     
     // We don't need to show toast here since the thunk already handles it
   };
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
   return (
     <SectionContainer>
       <SectionTitle

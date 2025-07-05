@@ -27,20 +27,29 @@ const PageContainer = styled.div`
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+<<<<<<< HEAD
   z-index: 1;
   overflow-y: auto; /* Changed to auto */
   display: block; /* Ensure it's a block element */
   isolation: isolate; /* Create a new stacking context */
+=======
+  z-index: 0;
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 `;
 
 const ContentWrapper = styled(motion.div)`
   position: relative;
+<<<<<<< HEAD
   z-index: 5; /* Increased to ensure it's above background elements */
   width: 100%;
   pointer-events: auto;
   display: block;
   /* Make sure content is visible and interactive */
   isolation: isolate; /* Create new stacking context */
+=======
+  z-index: 1;
+  width: 100%;
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 `;
 
 const StarsContainer = styled.div`
@@ -50,7 +59,11 @@ const StarsContainer = styled.div`
   width: 100%;
   height: 100%;
   pointer-events: none;
+<<<<<<< HEAD
   z-index: 0; /* Restored to 0 */
+=======
+  z-index: 0;
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 `;
 
 const FloatingMenu = styled(motion.div)`
@@ -211,7 +224,10 @@ const Home = () => {
         {isLoading && <LoadingScreen />}
       </AnimatePresence>
       
+<<<<<<< HEAD
       {/* Background elements */}
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
       <StarsContainer className="stars-container" />
       <FlickeringStars />
       <ShootingStars />
@@ -255,7 +271,11 @@ const Home = () => {
 
         <div className="section">
           <Vlogs />
+<<<<<<< HEAD
         </div>
+=======
+        </motion.div>
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
       </ContentWrapper>
 
       <FloatingMenu

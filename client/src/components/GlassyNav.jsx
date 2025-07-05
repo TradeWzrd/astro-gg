@@ -13,8 +13,12 @@ const MotionNav = motion.create(styled.nav`
   left: 0;
   right: 0;
   z-index: 1000;
+<<<<<<< HEAD
   padding: ${props => props.$scrolled ? '0.25rem' : '0.5rem'};
   transition: all 0.3s ease;
+=======
+  padding: 1rem;
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 `);
 
 const MotionContainer = motion.create(styled.div`
@@ -48,9 +52,15 @@ const LogoImage = styled.img.attrs(props => ({
   src: props.$src || '/logo.png',
   alt: props.$alt || 'Logo'
 }))`
+<<<<<<< HEAD
   height: ${props => props.$scrolled ? '30px' : '36px'};
   width: auto;
   transition: all 0.3s ease;
+=======
+  height: 40px;
+  width: auto;
+  transition: transform 0.3s ease;
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 
   &:hover {
     transform: scale(1.05);
@@ -107,9 +117,14 @@ const NavLink = motion.create(styled(Link)`
   font-weight: 500;
   font-size: ${props => props.$scrolled ? '0.9rem' : '1rem'};
   position: relative;
+<<<<<<< HEAD
   padding: 0.5rem 0.8rem;
   transition: all 0.3s ease;
   opacity: ${props => props.$isActive ? '1' : '0.8'};
+=======
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 
   &::after {
     content: '';
@@ -119,14 +134,22 @@ const NavLink = motion.create(styled(Link)`
     width: 100%;
     height: 2px;
     background: linear-gradient(to right, #a78bfa, #6d28d9);
+<<<<<<< HEAD
     transform: scaleX(${props => props.$isActive ? '1' : '0'});
     transform-origin: ${props => props.$isActive ? 'left' : 'right'};
+=======
+    transform: scaleX(0);
+    transform-origin: right;
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
     transition: transform 0.3s ease;
   }
 
   &:hover {
     color: #a78bfa;
+<<<<<<< HEAD
     opacity: 1;
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
     &::after {
       transform: scaleX(1);
       transform-origin: left;
@@ -138,7 +161,10 @@ const NavLink = motion.create(styled(Link)`
     width: 100%;
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+<<<<<<< HEAD
     font-size: 1rem;
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 
     &:last-child {
       border-bottom: none;
@@ -157,12 +183,21 @@ const IconButton = motion.create(styled.button`
   border: none;
   color: white;
   cursor: pointer;
+<<<<<<< HEAD
   padding: ${props => props.$scrolled ? '0.3rem' : '0.5rem'};
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: ${props => props.$scrolled ? '0.9rem' : '1rem'};
   transition: all 0.3s ease;
+=======
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 
   &:hover {
     color: #a78bfa;
@@ -290,6 +325,7 @@ const GlassyNav = () => {
   return (
     <MotionNav
       initial={{ y: -100, opacity: 0 }}
+<<<<<<< HEAD
       animate={{ 
         y: visible ? 0 : -100, 
         opacity: visible ? 1 : 0 
@@ -302,12 +338,25 @@ const GlassyNav = () => {
           <LogoImage $src="/assets/logo.svg" $alt="Astrology Logo" $scrolled={scrolled} />
         </LogoContainer>
         <NavItems $scrolled={scrolled}>
+=======
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <MotionContainer>
+        <LogoContainer to="/">
+          <LogoImage $src="/assets/logo.svg" $alt="Astrology Logo" />
+        </LogoContainer>
+        <NavItems>
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
           <NavLink
             to="/"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
             $scrolled={scrolled}
             $isActive={isActive("/")}
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
           >
             Home
           </NavLink>
@@ -315,8 +364,11 @@ const GlassyNav = () => {
             to="/astrology"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
             $scrolled={scrolled}
             $isActive={isActive("/astrology")}
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
           >
             Astrology
           </NavLink>
@@ -324,8 +376,11 @@ const GlassyNav = () => {
             to="/vastu"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
             $scrolled={scrolled}
             $isActive={isActive("/vastu")}
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
           >
             Vastu
           </NavLink>
@@ -333,8 +388,11 @@ const GlassyNav = () => {
             to="/numerology"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
             $scrolled={scrolled}
             $isActive={isActive("/numerology")}
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
           >
             Numerology
           </NavLink>
@@ -342,8 +400,11 @@ const GlassyNav = () => {
             to="/demo-blog"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
             $scrolled={scrolled}
             $isActive={isActive("/demo-blog")}
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
           >
             Blog
           </NavLink>
@@ -351,8 +412,11 @@ const GlassyNav = () => {
             to="/about"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
             $scrolled={scrolled}
             $isActive={isActive("/about")}
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
           >
             About
           </NavLink>
@@ -360,8 +424,11 @@ const GlassyNav = () => {
             to="/contact"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+<<<<<<< HEAD
             $scrolled={scrolled}
             $isActive={isActive("/contact")}
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
           >
             Contact
           </NavLink>
@@ -443,6 +510,7 @@ const GlassyNav = () => {
         exit={{ opacity: 0, y: -20 }}
         $scrolled={scrolled}
       >
+<<<<<<< HEAD
         <NavLink to="/" $isActive={isActive("/")} onClick={() => setIsMobileMenuOpen(false)}>Home</NavLink>
         <NavLink to="/astrology" $isActive={isActive("/astrology")} onClick={() => setIsMobileMenuOpen(false)}>Astrology</NavLink>
         <NavLink to="/vastu" $isActive={isActive("/vastu")} onClick={() => setIsMobileMenuOpen(false)}>Vastu</NavLink>
@@ -450,6 +518,15 @@ const GlassyNav = () => {
         <NavLink to="/demo-blog" $isActive={isActive("/demo-blog")} onClick={() => setIsMobileMenuOpen(false)}>Blog</NavLink>
         <NavLink to="/about" $isActive={isActive("/about")} onClick={() => setIsMobileMenuOpen(false)}>About</NavLink>
         <NavLink to="/contact" $isActive={isActive("/contact")} onClick={() => setIsMobileMenuOpen(false)}>Contact</NavLink>
+=======
+        <NavLink to="/">Home</NavLink>
+        <NavLink to="/astrology">Astrology</NavLink>
+        <NavLink to="/vastu">Vastu</NavLink>
+        <NavLink to="/numerology">Numerology</NavLink>
+        <NavLink to="/demo-blog">Blog</NavLink>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/contact">Contact</NavLink>
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
       </MobileMenu>
     </MotionNav>
   );

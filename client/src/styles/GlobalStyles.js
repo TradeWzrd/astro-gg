@@ -42,11 +42,15 @@ const GlobalStyles = createGlobalStyle`
 
   .section {
     position: relative;
+<<<<<<< HEAD
     z-index: 10;
     margin: 2rem 0;
     visibility: visible !important;
     opacity: 1 !important;
     display: block !important;
+=======
+    z-index: 1;
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
   }
 
   .stars-container {
@@ -56,7 +60,11 @@ const GlobalStyles = createGlobalStyle`
     width: 100%;
     height: 100%;
     pointer-events: none;
+<<<<<<< HEAD
     z-index: -1 !important;
+=======
+    z-index: 0;
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
   }
 
   .star {

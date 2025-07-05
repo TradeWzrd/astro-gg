@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+<<<<<<< HEAD
 import { logoutUser, updateAdminStatus } from '../Redux/AuthSlice';
 import { orderAPI, serviceAPI } from '../services/api';
 import api from '../services/api';
+=======
+import { logoutUser } from '../Redux/AuthSlice';
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 import styled from "styled-components";
 import { toast } from "react-hot-toast";
 import { 
@@ -13,6 +17,7 @@ import {
   FaCreditCard, 
   FaCalendarAlt, 
   FaUsers,
+<<<<<<< HEAD
   FaHome,
   FaUserEdit,
   FaGlobe,
@@ -30,6 +35,9 @@ import {
   FaCheck,
   FaClock,
   FaTimes
+=======
+  FaHome 
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 } from "react-icons/fa";
 import ShootingStars from "../components/ShootingStars";
 import FlickeringStars from "../components/FlickeringStars";
@@ -37,9 +45,12 @@ import Products from '../pages/Products';
 import Payments from '../pages/Payments';
 import Bookings from '../pages/Bookings';
 import Users from '../pages/Users';
+<<<<<<< HEAD
 import Profile from '../pages/Profile';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 import EnhancedAdminDashboard from '../components/EnhancedAdminDashboard';
+=======
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -175,6 +186,7 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
+<<<<<<< HEAD
   // Check for admin privileges using either isAdmin property or role field
   const isAdmin = user?.isAdmin || user?.role === 'admin' || false;
   const isAstrologer = user?.role === 'astrologer' || false;
@@ -243,6 +255,9 @@ const Dashboard = () => {
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
+=======
+  const [currentPage, setCurrentPage] = useState('dashboard');
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -617,6 +632,7 @@ const Dashboard = () => {
 
   // Render dashboard content based on user role and selected page
   const renderContent = () => {
+<<<<<<< HEAD
     // If on dashboard home page, show role-specific dashboard
     if (currentPage === 'dashboard') {
       return renderRoleDashboard();
@@ -1428,20 +1444,75 @@ const Dashboard = () => {
           )}
         </>
       );
+=======
+    switch (currentPage) {
+      case 'products':
+        return <Products />;
+      case 'payments':
+        return <Payments />;
+      case 'bookings':
+        return <Bookings />;
+      case 'users':
+        return <Users />;
+      default:
+        return (
+          <>
+            <StatsGrid>
+              <StatCard>
+                <h3>Total Orders</h3>
+                <div className="value">156</div>
+              </StatCard>
+              <StatCard>
+                <h3>Total Revenue</h3>
+                <div className="value">₹45,678</div>
+              </StatCard>
+              <StatCard>
+                <h3>Active Users</h3>
+                <div className="value">1,234</div>
+              </StatCard>
+            </StatsGrid>
+
+            <ActivitySection>
+              <h3>Recent Activity</h3>
+              <ActivityItem>
+                <p>New order received from John Doe</p>
+                <div className="date">2 hours ago</div>
+              </ActivityItem>
+              <ActivityItem>
+                <p>Payment received for Order #12345</p>
+                <div className="date">5 hours ago</div>
+              </ActivityItem>
+              <ActivityItem>
+                <p>New user registration: Jane Smith</p>
+                <div className="date">1 day ago</div>
+              </ActivityItem>
+            </ActivitySection>
+          </>
+        );
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
     }
   };
 
   return (
     <PageContainer>
+<<<<<<< HEAD
+=======
+      <ShootingStars />
+      <FlickeringStars />
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
       <Sidebar>
         <UserProfile>
           <Avatar>
             <FaUser />
           </Avatar>
+<<<<<<< HEAD
           <h3>{user?.name || 'User'}</h3>
           <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>
             {user?.isAdmin ? 'Administrator' : 'User'}
           </div>
+=======
+          <div>{user?.name || "User"}</div>
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
         </UserProfile>
 
         <div>
@@ -1452,13 +1523,21 @@ const Dashboard = () => {
             <FaHome /> Dashboard
           </NavItem>
           <NavItem
+<<<<<<< HEAD
             $isActive={currentPage === 'profile'}
             onClick={() => setCurrentPage('profile')}
           >
             <FaUserEdit /> Profile
+=======
+            $isActive={currentPage === 'products'}
+            onClick={() => setCurrentPage('products')}
+          >
+            <FaShoppingBag /> Products
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
           </NavItem>
           {/* User always sees bookings */}
           <NavItem
+<<<<<<< HEAD
             $isActive={currentPage === 'bookings'}
             onClick={() => setCurrentPage('bookings')}
           >
@@ -1518,6 +1597,24 @@ const Dashboard = () => {
           {/* Home button to navigate to the main site */}
           <NavItem onClick={() => navigate('/')}>
             <FaGlobe /> Main Site
+=======
+            $isActive={currentPage === 'payments'}
+            onClick={() => setCurrentPage('payments')}
+          >
+            <FaCreditCard /> Payments
+          </NavItem>
+          <NavItem
+            $isActive={currentPage === 'bookings'}
+            onClick={() => setCurrentPage('bookings')}
+          >
+            <FaCalendarAlt /> Bookings
+          </NavItem>
+          <NavItem
+            $isActive={currentPage === 'users'}
+            onClick={() => setCurrentPage('users')}
+          >
+            <FaUsers /> Users
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
           </NavItem>
           <NavItem onClick={handleLogout}>
             <FaSignOutAlt /> Logout

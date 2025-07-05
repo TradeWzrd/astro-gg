@@ -303,10 +303,18 @@ const Login = () => {
 
           <DemoCredentials>
             <h4>Demo Accounts</h4>
+<<<<<<< HEAD
             <p>Admin - admin@example.com / admin123</p>
             <p>User - user@example.com / user123</p>
             <p className="text-xs mt-1 text-gray-400">(First create these accounts in MongoDB)</p>
           </DemoCredentials>
+=======
+            <p>Admin - admin@demo.com / admin123</p>
+            <p>User - test123@gmail.com / test123</p>
+          </DemoCredentials>
+
+          <Divider>Or continue with</Divider>
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 
 
           <RegisterLink to="/register">

@@ -13,6 +13,7 @@ const LayoutContainer = styled.div`
 
 const MainContent = styled.main`
   flex: 1;
+<<<<<<< HEAD
   /* Use padding-top to create space for the navbar */
   padding-top: 100px; /* Adjust based on navbar height */
   transition: padding-top 0.3s ease;
@@ -31,6 +32,16 @@ const Layout = ({ children, alternateSpacing = false }) => {
     <LayoutContainer>
       <GlassyNav />
       <MainContent className={alternateSpacing ? 'with-alternate-padding' : ''}>
+=======
+  padding-top: 160px; // Account for fixed GlassyNav
+`;
+
+const Layout = ({ children }) => {
+  return (
+    <LayoutContainer>
+      <GlassyNav />
+      <MainContent>
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
         {children}
       </MainContent>
       <Footer />

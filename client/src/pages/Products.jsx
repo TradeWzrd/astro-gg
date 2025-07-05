@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
@@ -5,6 +6,13 @@ import { FaPlus, FaEdit, FaTrash, FaSpinner, FaSave } from 'react-icons/fa';
 import ShootingStars from '../components/ShootingStars';
 import { productAPI } from '../services/api';
 import { toast } from 'react-hot-toast';
+=======
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import ShootingStars from '../components/ShootingStars';
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
 import FlickeringStars from '../components/FlickeringStars';
 
 const PageContainer = styled.div`
@@ -92,6 +100,7 @@ const ActionButton = styled(motion.button)`
 `;
 
 const Products = () => {
+<<<<<<< HEAD
   // State for products management
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -224,6 +233,49 @@ const Products = () => {
       console.error('Error saving product:', err);
       toast.error(err.response?.data?.message || 'Failed to save product');
     }
+=======
+  const [products] = useState([
+    {
+      id: 1,
+      name: 'Astrology Book',
+      price: '$15.99',
+      stock: true,
+      lastUpdated: '2024-12-01'
+    },
+    {
+      id: 2,
+      name: 'Horoscope Report',
+      price: '$25.00',
+      stock: true,
+      lastUpdated: '2024-12-10'
+    },
+    {
+      id: 3,
+      name: 'Tarot Card Set',
+      price: '$12.50',
+      stock: false,
+      lastUpdated: '2024-12-15'
+    },
+    {
+      id: 4,
+      name: 'Crystal Healing Kit',
+      price: '$35.00',
+      stock: true,
+      lastUpdated: '2024-12-20'
+    }
+  ]);
+
+  const handleAddProduct = () => {
+    // Add product functionality
+  };
+
+  const handleEditProduct = (id) => {
+    // Edit product functionality
+  };
+
+  const handleDeleteProduct = (id) => {
+    // Delete product functionality
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
   };
 
   return (
@@ -242,6 +294,7 @@ const Products = () => {
         </AddButton>
       </Header>
 
+<<<<<<< HEAD
       {showProductForm ? (
         <div style={{
           background: 'rgba(255, 255, 255, 0.05)',
@@ -534,6 +587,51 @@ const Products = () => {
           </Table>
         </ProductTable>
       )}
+=======
+      <ProductTable>
+        <Table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Last Updated</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map(product => (
+              <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>{product.price}</td>
+                <td>
+                  <StockBadge inStock={product.stock}>
+                    {product.stock ? 'In Stock' : 'Out of Stock'}
+                  </StockBadge>
+                </td>
+                <td>{product.lastUpdated}</td>
+                <td>
+                  <ActionButton
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleEditProduct(product.id)}
+                  >
+                    <FaEdit />
+                  </ActionButton>
+                  <ActionButton
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleDeleteProduct(product.id)}
+                  >
+                    <FaTrash />
+                  </ActionButton>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </ProductTable>
+>>>>>>> 2cd4a7384779fc1db615500d9a9239eb0f7d899c
     </PageContainer>
   );
 };

@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import axios from 'axios';
-import { FaTrash, FaEdit } from 'react-icons/fa';
-import GlassyNav from '../components/GlassyNav';
+import { FaTrash, FaEdit, FaShoppingCart, FaMinus, FaPlus } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
+// Import Redux thunks
+import { 
+  fetchCart, 
+  removeItemFromCart, 
+  updateItemInCart,
+  clearCartItems 
+} from '../Redux/CartSlice';
 import ShootingStars from '../components/ShootingStars';
 import FlickeringStars from '../components/FlickeringStars';
 
@@ -13,13 +20,14 @@ const PageContainer = styled.div`
   background: linear-gradient(135deg, #2A0066 0%, #4B0082 100%);
   position: relative;
   color: white;
-  padding: 10rem 2rem 2rem 2rem;
+  padding: 2rem;
+  padding-top: 10rem; /* Further increased padding to prevent navbar overlap */
 `;
 
 const Title = styled.h1`
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   text-align: center;
-  margin: 2rem 0 3rem 0;
+  margin: 0 0 3rem 0;
   font-weight: 700;
   letter-spacing: 2px;
   background: linear-gradient(45deg, #fff, #B6D5FF);
@@ -124,9 +132,30 @@ const NotesTextarea = styled.textarea`
 
 const Summary = styled.div`
   margin-top: 2rem;
-  text-align: right;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 1rem;
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  .total {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
+  }
+  
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+  }
 `;
 
 const ProceedButton = styled(motion.button)`
@@ -143,77 +172,64 @@ const ProceedButton = styled(motion.button)`
 
 const Cart = () => {
   const [notes, setNotes] = useState('');
-  const [cartItems, setCartItems] = useState([]);  // Local state for cart items
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [loading, setLoading] = useState(false);  // Loading state for async operations
-  const user = useSelector((state) => state.auth.user); // Assuming user is stored in auth slice
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  console.log("user id cart", user);
+  // Get cart state from Redux store
+  const { cartItems, totalAmount, loading, error } = useSelector((state) => state.cart);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
 
-  // Fetch cart items from the server when user is logged in
-  const fetchCartItems = async () => {
-    setLoading(true);  // Set loading to true when the fetch starts
-    try {
-      const response = await axios.get(`http://localhost:4000/api/cart/${user.userId}`);
-      const cartData = response.data;
-      console.log("Fetched Cart Data:", cartData);
+  // Fetch cart when component mounts
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchCart());
+    } else {
+      // Redirect to login if not authenticated
+      navigate('/login');
+      toast.error('Please login to view your cart');
+    }
+  }, [dispatch, isAuthenticated, navigate]);
 
-      if (cartData && cartData.length > 0) {
-        setCartItems(cartData);
-      }
-    } catch (error) {
-      console.error("Error fetching cart items:", error);
-    } finally {
-      setLoading(false);  // Set loading to false after the fetch operation
+  // Handle quantity update
+  const handleUpdateQuantity = (itemId, currentQuantity, delta) => {
+    const newQuantity = currentQuantity + delta;
+    
+    if (newQuantity > 0) {
+      dispatch(updateItemInCart({ itemId, quantity: newQuantity }));
+    } else if (newQuantity === 0) {
+      // If quantity becomes 0, remove the item
+      handleRemoveItem(itemId);
     }
   };
 
-  const calculateSubtotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  // Handle item removal
+  const handleRemoveItem = (itemId) => {
+    dispatch(removeItemFromCart(itemId));
   };
 
-  const handleRemove = async (cart_item_id) => {
-    if (!cart_item_id) {
-      console.error("Invalid cart_item_id provided for deletion");
+  // Handle proceed to checkout
+  const handleCheckout = () => {
+    if (cartItems.length === 0) {
+      toast.error('Your cart is empty');
       return;
     }
-
-    try {
-      // API call to delete item from cart
-      const response = await axios.delete(`http://localhost:4000/api/cart/delete/${cart_item_id}`);
-      if (response.status === 200) {
-        console.log(`Item with cart_item_id: ${cart_item_id} removed successfully`);
-        
-        // After removing, refetch the updated cart data from the server
-        const updatedCart = await axios.get(`http://localhost:4000/api/cart/${user.userId}`);
-        setCartItems(updatedCart.data); // Update local state with fresh data from the server
-      }
-    } catch (error) {
-      console.error("Error removing item from cart:", error);
-    }
+    
+    // Navigate to checkout page with cart data
+    navigate('/checkout', { state: { notes } });
   };
 
-  React.useEffect(() => {
-    if (user && user.userId) {
-      fetchCartItems();
+  // Clear entire cart
+  const handleClearCart = () => {
+    if (cartItems.length === 0) {
+      toast.error('Your cart is already empty');
+      return;
     }
-  }, [user]);
-
-  React.useEffect(() => {
-    const calculateTotal = () => {
-      if (cartItems.length === 0) {
-        setTotalAmount(0);  // Set to 0 if no items
-      } else {
-        const newTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-        setTotalAmount(newTotal);
-      }
-    };
-    calculateTotal();
-  }, [cartItems]);
+    
+    dispatch(clearCartItems());
+  };
 
   return (
     <PageContainer>
-      <GlassyNav />
       <ShootingStars />
       <FlickeringStars />
 
@@ -228,37 +244,63 @@ const Cart = () => {
         </CartHeader>
 
         {loading ? (
-          <div>Loading...</div>
+          <div className="loading-spinner">Loading your cart...</div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
         ) : cartItems.length === 0 ? (
-          <p>Your cart is empty</p>
+          <EmptyCart>
+            <FaShoppingCart size={50} />
+            <p>Your cart is empty</p>
+            <EmptyCartButton 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/products')}
+            >
+              Browse Products
+            </EmptyCartButton>
+          </EmptyCart>
         ) : (
-          cartItems.map((item, index) => (
-            <CartItem key={index}>
+          cartItems.map((item) => (
+            <CartItem key={item._id}>
               <ProductInfo>
-                <ProductImage />
+                {item.image ? (
+                  <ProductImage src={item.image} alt={item.name} />
+                ) : (
+                  <ProductImage />
+                )}
                 <ProductDetails>
-                  <h3>{item.title}</h3>
+                  <h3>{item.name}</h3>
                   <p>{item.description}</p>
-                  <ActionButtons>
-                    <IconButton
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <FaEdit />
-                    </IconButton>
-                    <IconButton
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => handleRemove(item.cart_item_id)}
-                    >
-                      <FaTrash />
-                    </IconButton>
-                  </ActionButtons>
                 </ProductDetails>
               </ProductInfo>
               <div>₹{item.price.toFixed(2)}</div>
-              <div>{item.quantity}</div>
-              <div>₹{(item.price * item.quantity).toFixed(2)}</div>
+              <QuantityControl>
+                <IconButton
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => handleUpdateQuantity(item._id, item.quantity, -1)}
+                >
+                  <FaMinus />
+                </IconButton>
+                <span>{item.quantity}</span>
+                <IconButton
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => handleUpdateQuantity(item._id, item.quantity, 1)}
+                >
+                  <FaPlus />
+                </IconButton>
+              </QuantityControl>
+              <div>
+                <div>₹{(item.price * item.quantity).toFixed(2)}</div>
+                <RemoveButton
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => handleRemoveItem(item._id)}
+                >
+                  <FaTrash /> Remove
+                </RemoveButton>
+              </div>
             </CartItem>
           ))
         )}
@@ -273,18 +315,117 @@ const Cart = () => {
         </NotesSection>
 
         <Summary>
-          <h2>Subtotal: Rs. {calculateSubtotal().toFixed(2)}</h2>
-          <p>Taxes and shipping calculated at checkout</p>
-          <ProceedButton
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            PROCEED TO BUY
-          </ProceedButton>
+          <div className="summary-row">
+            <span>Subtotal:</span>
+            <span>₹{totalAmount.toFixed(2)}</span>
+          </div>
+          <div className="summary-row">
+            <span>Shipping:</span>
+            <span>{totalAmount > 0 ? 'FREE' : '₹0.00'}</span>
+          </div>
+          <div className="summary-row">
+            <span>Tax (18% GST):</span>
+            <span>₹{(totalAmount * 0.18).toFixed(2)}</span>
+          </div>
+          <div className="summary-row total">
+            <span>Total:</span>
+            <span>₹{(totalAmount * 1.18).toFixed(2)}</span>
+          </div>
+
+          <div className="button-group">
+            <ClearButton
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleClearCart}
+              disabled={cartItems.length === 0}
+            >
+              Clear Cart
+            </ClearButton>
+            <ProceedButton
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleCheckout}
+              disabled={cartItems.length === 0}
+            >
+              PROCEED TO CHECKOUT
+            </ProceedButton>
+          </div>
         </Summary>
       </CartContainer>
     </PageContainer>
   );
 };
+
+// Additional styled components
+const QuantityControl = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  span {
+    width: 30px;
+    text-align: center;
+    font-weight: 600;
+  }
+`;
+
+const RemoveButton = styled(motion.button)`
+  background: none;
+  border: none;
+  color: rgba(255, 50, 50, 0.8);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  border-radius: 4px;
+  
+  &:hover {
+    background: rgba(255, 50, 50, 0.1);
+  }
+`;
+
+const EmptyCart = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.6);
+  
+  p {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+  }
+`;
+
+const EmptyCartButton = styled(motion.button)`
+  background: linear-gradient(45deg, #9c27b0, #673ab7);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+`;
+
+const ClearButton = styled(motion.button)`
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
 
 export default Cart;

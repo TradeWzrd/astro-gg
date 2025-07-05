@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, updateCartItem } from "../Redux/CartSlice"; // Redux action
+import { addItemToCart, updateItemInCart } from "../Redux/CartSlice"; // Redux thunks
 import axios from "axios"; // API requests
 import { useNavigate, useParams } from "react-router-dom"; // For navigation
 import { createOrder, checkOrderStatus } from '../components/api';
@@ -237,10 +237,17 @@ const ProductPage = () => {
     };
 
     try {
-      const response = await axios.post("http://localhost:4000/api/cart/add", cartItem);
-      if (response.status === 201) {
-        dispatch(addToCart(cartItem)); // Dispatch to Redux store
-        alert("Item added to the cart successfully!");
+      // Use our Redux thunk which handles the API call internally
+      const resultAction = await dispatch(addItemToCart({
+        productId: service.id,
+        quantity: existingItem ? existingItem.quantity + 1 : 1
+      }));
+      
+      if (addItemToCart.fulfilled.match(resultAction)) {
+        // Toast notification is handled in the thunk
+        console.log("Item added to the cart successfully!");
+      } else if (resultAction.error) {
+        console.error("Error adding to cart:", resultAction.error);
       }
     } catch (error) {
       console.error("Failed to add item to the cart:", error);

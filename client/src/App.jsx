@@ -20,6 +20,10 @@ const ServicesSection = lazy(() => import('./components/ServicesSection'));
 const Footer = lazy(() => import('./components/Footer'));
 const Product = lazy(() => import('./pages/Product'));
 const VastuConsultation = lazy(() => import('./pages/Product/VastuConsultation'));
+const OrderSuccess = lazy(() => import('./pages/OrderSuccess'));
+const OrderDetails = lazy(() => import('./pages/OrderDetails'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const UserOrders = lazy(() => import('./pages/UserOrders'));
 
 const App = () => {
   return (
@@ -39,6 +43,18 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
+          <Route path="/order/:orderId" element={
+            <ProtectedRoute>
+              <OrderDetails />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile/orders" element={
+            <ProtectedRoute>
+              <UserOrders />
+            </ProtectedRoute>
+          } />
           <Route path="/astrology" element={<Astrology />} />
           <Route path="/numerology" element={<Numerology />} />
           <Route path="/vastu" element={<Vastu />} />

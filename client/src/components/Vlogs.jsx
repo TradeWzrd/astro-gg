@@ -47,13 +47,21 @@ const VlogCard = styled(motion.div)`
   }
 `;
 
-const VlogThumbnail = styled.div`
+const VlogThumbnail = styled.div.attrs(props => ({
+  style: {
+    backgroundImage: `url(${props.$image})`
+  }
+}))`
   width: 100%;
   height: 200px;
-  background-color: #2d1b69;
-  background-image: ${props => props.image ? `url(${props.image})` : 'none'};
   background-size: cover;
   background-position: center;
+  border-radius: 8px 8px 0 0;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 const VlogContent = styled.div`
@@ -152,7 +160,7 @@ const Vlogs = () => {
             transition={{ duration: 0.6, delay: index * 0.1 }}
             whileHover={{ scale: 1.02 }}
           >
-            <VlogThumbnail image={vlog.thumbnail} />
+            <VlogThumbnail $image={vlog.thumbnail} />
             <VlogContent>
               <VlogTitle>{vlog.title}</VlogTitle>
               <VlogDescription>{vlog.description}</VlogDescription>

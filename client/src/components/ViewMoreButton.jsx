@@ -1,9 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-const StyledButton = styled(motion(Link))`
+const StyledButton = motion.create(styled(Link)`
   display: inline-block;
   padding: 0.8rem 2rem;
   margin-top: 2rem;
@@ -21,7 +21,7 @@ const StyledButton = styled(motion(Link))`
     background: rgba(167, 139, 250, 0.2);
     transform: translateY(-2px);
   }
-`;
+`);
 
 const ViewMoreButton = ({ to, children }) => {
   return (

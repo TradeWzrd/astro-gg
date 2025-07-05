@@ -1,10 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const demoUser = {
-  email: 'test123@gmail.com',
-  password: 'test123@gmail.com',
-  name: 'Demo User',
-  role: 'user'
+const demoAccounts = {
+  admin: {
+    email: 'admin@demo.com',
+    password: 'admin123',
+    name: 'Admin User',
+    role: 'admin'
+  },
+  user: {
+    email: 'test123@gmail.com',
+    password: 'test123@gmail.com',
+    name: 'Demo User',
+    role: 'user'
+  }
 };
 
 const initialState = {
@@ -40,11 +48,20 @@ export const { loginSuccess, loginFailure, logout } = authSlice.actions;
 // Demo login thunk
 export const loginUser = (credentials) => (dispatch) => {
   try {
+    // Check admin credentials
     if (
-      credentials.email === demoUser.email &&
-      credentials.password === demoUser.password
+      credentials.email === demoAccounts.admin.email &&
+      credentials.password === demoAccounts.admin.password
     ) {
-      dispatch(loginSuccess(demoUser));
+      dispatch(loginSuccess(demoAccounts.admin));
+      return true;
+    }
+    // Check regular user credentials
+    else if (
+      credentials.email === demoAccounts.user.email &&
+      credentials.password === demoAccounts.user.password
+    ) {
+      dispatch(loginSuccess(demoAccounts.user));
       return true;
     } else {
       dispatch(loginFailure('Invalid email or password'));

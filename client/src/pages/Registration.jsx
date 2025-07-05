@@ -2,11 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../Redux/AuthSlice";
 import { FaFacebook, FaInstagram, FaGoogle, FaUpload } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const RegistrationForm = () => {
   const dispatch = useDispatch();
-  const { loading, error, user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const { loading, error, user, isAuthenticated } = useSelector((state) => state.auth);
+  
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -43,13 +52,40 @@ const RegistrationForm = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
-    dispatch(registerUser(formData));
+    
+    // Prepare data for MongoDB backend
+    const userData = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      phoneNumber: formData.phone,
+      dateOfBirth: formData.dateOfBirth,
+      timeOfBirth: formData.timeOfBirth,
+      placeOfBirth: formData.placeOfBirth,
+      // Additional fields are stored but not required by our MongoDB model
+    };
+    
+    try {
+      const resultAction = await dispatch(registerUser(userData));
+      
+      if (registerUser.fulfilled.match(resultAction)) {
+        // Registration successful - navigate to dashboard
+        navigate('/dashboard');
+      } else {
+        // Error handling is done in the thunk with toast notifications
+        if (resultAction.error) {
+          console.error('Registration error:', resultAction.error);
+        }
+      }
+    } catch (err) {
+      console.error('Registration error:', err);
+    }
   };
 
   return (

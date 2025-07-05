@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import vastuServices from '../components/vastuArray';
-import { FaPlus, FaMinus, FaArrowRight, FaHome, FaBuilding, FaStore, FaWarehouse, FaPrayingHands } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { FaPlus, FaMinus, FaArrowRight, FaHome, FaBuilding, FaStore, FaWarehouse, FaPrayingHands, FaShoppingCart, FaSpinner } from 'react-icons/fa';
 import GlassyNav from '../components/GlassyNav';
+import { serviceAPI } from '../services/api';
+import { addItemToCart } from '../Redux/CartSlice';
+import { productAPI } from '../services/api';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -175,13 +180,24 @@ const BookNowButton = styled(motion.button)`
   border: none;
   border-radius: 10px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  cursor: pointer !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 1.1rem;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto !important;
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(182, 213, 255, 0.3);
+  }
+
+  svg {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &:hover svg {
+    transform: translateX(5px);
   }
 `;
 
@@ -284,7 +300,56 @@ const FAQ = ({ question, answer }) => {
   );
 };
 
-const ServiceCardComponent = ({ service, index }) => {
+const ServiceCardComponent = ({ service, serviceId, index, isService, isProduct }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const isAdmin = user?.isAdmin;
+
+  // Generate a unique productId based on the service ID or name
+  const productId = serviceId || ('vastu-' + service.serviceName.toLowerCase().replace(/\s+/g, '-'));
+
+  const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to add items to your cart');
+      navigate('/login');
+      return;
+    }
+    
+    // Handle different price formats
+    let priceValue = 7999; // Default price
+    
+    if (typeof service.pricing === 'number') {
+      priceValue = service.pricing;
+    } else if (typeof service.pricing === 'string') {
+      try {
+        // Parse the pricing string to extract the first number
+        const priceStr = service.pricing.split('–')[0].trim();
+        const numericValue = priceStr.replace(/[^\d]/g, '');
+        if (numericValue) {
+          priceValue = parseInt(numericValue, 10);
+        }
+      } catch (error) {
+        console.log('Error parsing price:', error);
+        // Continue with default price if parsing fails
+      }
+    }
+    
+    dispatch(addItemToCart({
+      productId,
+      quantity: 1
+    }));
+    
+    toast.success(`${service.serviceName} added to cart`);
+  };
+  
+  const handleEdit = () => {
+    if (isService) {
+      navigate(`/admin/service-edit/${serviceId}`);
+    } else if (isProduct) {
+      navigate(`/dashboard?tab=products&edit=${serviceId}`);
+    }
+  };
   return (
     <ServiceCard
       initial={{ opacity: 0, y: 50 }}
@@ -316,35 +381,131 @@ const ServiceCardComponent = ({ service, index }) => {
           <FAQ key={faqIndex} question={faq.question} answer={faq.answer} />
         ))}
       </FAQSection>
-      <BookNowButton
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        transition={{
-          type: "spring",
-          stiffness: 400,
-          damping: 17
-        }}
-      >
-        Book Consultation <FaArrowRight />
-      </BookNowButton>
+      <div style={{ width: '100%', position: 'relative', zIndex: 10 }}>
+        <BookNowButton
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{
+            type: "spring",
+            stiffness: 400,
+            damping: 17
+          }}
+          onClick={handleAddToCart}
+          as="button"
+          type="button"
+        >
+          <FaShoppingCart style={{ marginRight: '10px' }} /> Add to Cart
+        </BookNowButton>
+        
+        {isAdmin && serviceId && (
+          <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+            <BookNowButton
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleEdit}
+              as="button"
+              type="button"
+              style={{ background: 'linear-gradient(45deg, #10B981, #059669)' }}
+            >
+              {isService ? 'Edit Service' : 'Edit Product'}
+            </BookNowButton>
+          </div>
+        )}
+      </div>
     </ServiceCard>
   );
 };
 
 const Vastu = () => {
+  const [services, setServices] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchServicesAndProducts = async () => {
+      try {
+        setLoading(true);
+        // Fetch both services and products in parallel
+        const [servicesResponse, productsResponse] = await Promise.all([
+          serviceAPI.getServices({ category: 'vastu' }),
+          productAPI.getProducts('', '', 'vastu')
+        ]);
+        
+        console.log('Services response:', servicesResponse.data);
+        console.log('Products response:', productsResponse.data);
+        
+        setServices(servicesResponse.data.services || []);
+        setProducts(productsResponse.data.products || []);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching vastu data:', err);
+        setError('Failed to load vastu data: ' + (err.message || 'Unknown error'));
+        setLoading(false);
+        // Fallback to empty arrays if API fails
+        setServices([]);
+        setProducts([]);
+      }
+    };
+
+    fetchServicesAndProducts();
+  }, []);
+
   return (
     <PageContainer>
       <GlassyNav />
       <StarBackground />
       <PageTitle>Vastu Services</PageTitle>
       <ServiceGrid>
-        {vastuServices.map((service, index) => (
-          <ServiceCardComponent 
-            key={index} 
-            service={service} 
-            index={index}
-          />
-        ))}
+        {loading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '3rem' }}>
+            <FaSpinner style={{ fontSize: '2rem', color: 'white', animation: 'spin 1s linear infinite' }} />
+          </div>
+        ) : error ? (
+          <div style={{ color: 'white', textAlign: 'center', padding: '3rem' }}>
+            {error}
+          </div>
+        ) : services.length === 0 && products.length === 0 ? (
+          <div style={{ color: 'white', textAlign: 'center', padding: '3rem' }}>
+            No vastu services found.
+          </div>
+        ) : (
+          <>
+            {/* Display Services */}
+            {services.map((service, index) => (
+              <ServiceCardComponent 
+                key={service._id} 
+                service={{
+                  serviceName: service.name,
+                  description: service.description,
+                  pricing: service.price,
+                  faqs: service.faqs,
+                  image: service.image
+                }} 
+                serviceId={service._id}
+                index={index}
+                isService={true}
+              />
+            ))}
+            
+            {/* Display Products */}
+            {products.map((product, index) => (
+              <ServiceCardComponent 
+                key={product._id} 
+                service={{
+                  serviceName: product.name,
+                  description: product.description,
+                  pricing: product.price,
+                  faqs: [],
+                  image: product.images && product.images.length > 0 ? product.images[0].url : ''
+                }} 
+                serviceId={product._id}
+                index={index + services.length}
+                isProduct={true}
+              />
+            ))}
+          </>
+        )}
       </ServiceGrid>
     </PageContainer>
   );

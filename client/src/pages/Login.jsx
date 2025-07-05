@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { loginUser } from '../store/authSlice';
+import { loginUser } from '../Redux/AuthSlice';
 import { toast } from 'react-hot-toast';
-import { FaEnvelope, FaLock, FaGoogle, FaFacebook } from 'react-icons/fa';
+import { FaEnvelope, FaLock } from 'react-icons/fa'; // Removed FaGoogle, FaFacebook as they're no longer needed
 import ShootingStars from '../components/ShootingStars';
 import FlickeringStars from '../components/FlickeringStars';
 
@@ -148,32 +148,6 @@ const Divider = styled.div`
   }
 `;
 
-const SocialLogin = styled.div`
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-`;
-
-const SocialButton = styled(motion.button)`
-  padding: 0.8rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
-  }
-`;
-
 const RegisterLink = styled(Link)`
   display: block;
   text-align: center;
@@ -206,6 +180,24 @@ const ForgotPassword = styled(Link)`
   }
 `;
 
+const DemoCredentials = styled.div`
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  color: #a78bfa;
+  font-size: 0.9rem;
+
+  h4 {
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin: 0.25rem 0;
+  }
+`;
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -219,13 +211,20 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const success = await dispatch(loginUser({ email, password }));
-      if (success) {
-        toast.success('Welcome back!');
+      // Updated to handle the unwrapped promise result from Redux Toolkit
+      const resultAction = await dispatch(loginUser({ email, password }));
+      
+      if (loginUser.fulfilled.match(resultAction)) {
+        // Successfully logged in
         navigate('/dashboard');
+      } else {
+        // Toast error is handled by the thunk, but we can add a fallback here
+        if (resultAction.error) {
+          console.error('Login error:', resultAction.error);
+        }
       }
     } catch (err) {
-      toast.error(error || 'Invalid credentials');
+      console.error('Login error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -302,22 +301,13 @@ const Login = () => {
             </LoginButton>
           </Form>
 
-          <Divider>Or continue with</Divider>
+          <DemoCredentials>
+            <h4>Demo Accounts</h4>
+            <p>Admin - admin@example.com / admin123</p>
+            <p>User - user@example.com / user123</p>
+            <p className="text-xs mt-1 text-gray-400">(First create these accounts in MongoDB)</p>
+          </DemoCredentials>
 
-          <SocialLogin>
-            <SocialButton
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FaGoogle /> Google
-            </SocialButton>
-            <SocialButton
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <FaFacebook /> Facebook
-            </SocialButton>
-          </SocialLogin>
 
           <RegisterLink to="/register">
             Don't have an account?<span>Create one now</span>

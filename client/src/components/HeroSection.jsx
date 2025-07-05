@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
+import { FaStar } from 'react-icons/fa';
 
 const rotate = keyframes`
   from { transform: rotate(0deg); }
@@ -17,6 +18,7 @@ const HeroContainer = styled.div`
   align-items: center;
   padding-bottom: 4rem;
   margin-bottom: 2rem;
+  z-index: 10; /* Added higher z-index to ensure it's visible */
 `;
 
 const SolarSystem = styled.div`
@@ -99,32 +101,40 @@ const HeroContent = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
-  z-index: 10;
+  z-index: 20; /* Increased z-index to ensure content is visible */
   width: 100%;
   padding: 0 20px;
   color: white;
 `;
 
-const Title = styled.h1`
+const Title = styled(motion.h1)`
   font-size: 4.5rem;
   font-weight: 800;
   margin-bottom: 1.5rem;
   color: #FFFFFF;
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
   letter-spacing: 2px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 
   @media (max-width: 768px) {
     font-size: 3rem;
   }
 `;
 
-const Subtitle = styled.p`
+const Subtitle = styled(motion.p)`
   font-size: 1.8rem;
   margin-bottom: 3rem;
   color: rgba(255, 255, 255, 0.95);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   font-weight: 500;
   letter-spacing: 1px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 
   @media (max-width: 768px) {
     font-size: 1.4rem;
@@ -188,15 +198,18 @@ const StatsContainer = styled.div`
   margin-right: auto;
 `;
 
-const StatBox = styled.div`
+const StatBox = styled(motion.div)`
   text-align: center;
-  color: white;
   opacity: 0;
   transform: translateY(20px);
-  animation: fadeInUp 0.8s forwards;
+  animation: fadeIn 0.5s ease forwards;
   animation-delay: ${props => props.delay}s;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 
-  @keyframes fadeInUp {
+  @keyframes fadeIn {
     to {
       opacity: 1;
       transform: translateY(0);
@@ -210,17 +223,58 @@ const StatBox = styled.div`
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 0.5rem;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
 
   .label {
     font-size: 1rem;
     opacity: 0.9;
     letter-spacing: 1px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
 
   .plus {
     color: #B6D5FF;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
+`;
+
+const ReviewsLabel = styled.span`
+  margin-left: 6px;
+  color: rgba(255, 255, 255, 0.9);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+`;
+
+const LabelContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+`;
+
+const StarIcon = styled(FaStar)`
+  font-size: 1rem;
+`;
+
+const StarsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: -5px;
+  color: #FFD700;
 `;
 
 const HeroSection = () => {
@@ -250,16 +304,27 @@ const HeroSection = () => {
 
           <StatBox delay={0.4}>
             <div className="number">
-              15<span className="plus">+</span>
+              4000<span className="plus">+</span>
             </div>
-            <div className="label">Years Experience</div>
+            <div className="label">
+              <LabelContainer>
+                <StarsContainer>
+                  <StarIcon />
+                  <StarIcon />
+                  <StarIcon />
+                  <StarIcon />
+                  <StarIcon />
+                </StarsContainer>
+                <ReviewsLabel>Reviews</ReviewsLabel>
+              </LabelContainer>
+            </div>
           </StatBox>
 
           <StatBox delay={0.5}>
             <div className="number">
-              4000<span className="plus">+</span>
+              15<span className="plus">+</span>
             </div>
-            <div className="label">5-Star Reviews</div>
+            <div className="label">Years Experience</div>
           </StatBox>
         </StatsContainer>
       </HeroContent>

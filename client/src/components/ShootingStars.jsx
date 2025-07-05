@@ -34,11 +34,18 @@ const StarContainer = styled.div`
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 1;
+  z-index: 1; /* Restored original value */
   overflow: hidden;
 `;
 
-const Star = styled.div`
+const Star = styled.div.attrs(props => ({
+  style: {
+    top: `${props.$top}vh`,
+    right: `${props.$right}vw`,
+    animationDuration: `${props.$duration}s`,
+    animationDelay: `${props.$delay}s`
+  }
+}))`
   position: absolute;
   width: 100px;
   height: 1px;
@@ -47,10 +54,7 @@ const Star = styled.div`
     rgba(255,255,255,0.8) 20%,
     rgba(255,255,255,0) 100%
   );
-  animation: ${shootingStar} ${props => props.duration}s linear infinite;
-  animation-delay: ${props => props.delay}s;
-  top: ${props => props.top}vh;
-  right: ${props => props.right}vw;
+  animation: ${shootingStar} linear infinite;
   opacity: 0;
   transform-origin: right;
 
@@ -85,15 +89,12 @@ const Star = styled.div`
   }
 `;
 
-const generateRandomPosition = () => {
-  // Random position across entire viewport
-  const top = Math.random() * 100; // 0-100vh
-  const right = Math.random() * 30 - 10; // -10 to 20vw (starts slightly off-screen)
-  const duration = Math.random() * 3 + 5; // 5-8 seconds
-  const delay = Math.random() * 30; // 0-30 seconds delay
-  
-  return { top, right, duration, delay };
-};
+const generateRandomPosition = () => ({
+  $top: Math.random() * 100, // 0-100vh
+  $right: Math.random() * 30 - 10, // -10 to 20vw (starts slightly off-screen)
+  $duration: Math.random() * 3 + 5, // 5-8 seconds
+  $delay: Math.random() * 30 // 0-30 seconds delay
+});
 
 const ShootingStars = () => {
   const stars = Array.from({ length: 4 }, (_, i) => ({
@@ -104,13 +105,7 @@ const ShootingStars = () => {
   return (
     <StarContainer>
       {stars.map(star => (
-        <Star
-          key={star.id}
-          duration={star.duration}
-          delay={star.delay}
-          top={star.top}
-          right={star.right}
-        />
+        <Star key={star.id} {...star} />
       ))}
     </StarContainer>
   );

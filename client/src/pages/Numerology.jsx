@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBriefcase, FaUser, FaBaby, FaClock, FaArrowUp, FaSearch, FaStar } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { FaBriefcase, FaUser, FaBaby, FaClock, FaArrowUp, FaSearch, FaStar, FaShoppingCart, FaSpinner, FaEdit, FaTrash } from 'react-icons/fa';
+import { serviceAPI } from '../services/api';
 import GlassyNav from '../components/GlassyNav';
 import ShootingStars from '../components/ShootingStars';
 import FlickeringStars from '../components/FlickeringStars';
+import { addItemToCart } from '../Redux/CartSlice';
+import { productAPI } from '../services/api';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -441,72 +447,16 @@ const Star = styled.div`
   }
 `;
 
-const services = [
-  {
-    icon: <FaBriefcase />,
-    title: "Business Numerology",
-    description: "Unlock the potential of your business through numerical analysis. Get insights into favorable dates, naming strategies, and business decisions.",
-    price: "₹2,100 - ₹5,100",
-    faqs: [
-      {
-        q: "How can numerology help my business?",
-        a: "Business numerology can help identify auspicious dates for important decisions, optimize your business name for success, and align your strategies with favorable numerical patterns."
-      },
-      {
-        q: "What's included in the business analysis?",
-        a: "Our analysis includes business name compatibility, lucky dates for major decisions, partnership compatibility, and financial timing recommendations."
-      }
-    ]
-  },
-  {
-    icon: <FaUser />,
-    title: "Personal Name Analysis",
-    description: "Discover how your name influences your life path. Learn about your personality traits, strengths, and potential challenges.",
-    price: "₹1,500 - ₹3,500",
-    faqs: [
-      {
-        q: "Can changing my name improve my life?",
-        a: "Name changes can influence your energy patterns and life experiences. We analyze potential name modifications that align better with your birth numbers and life goals."
-      },
-      {
-        q: "What information do you need for name analysis?",
-        a: "We need your full birth name, current name if different, and birth date to provide a comprehensive name analysis."
-      }
-    ]
-  },
-  {
-    icon: <FaBaby />,
-    title: "Newborn Name Selection",
-    description: "Choose the perfect name for your child based on birth date, family numerology, and future life path predictions.",
-    price: "₹2,500 - ₹4,500",
-    faqs: [
-      {
-        q: "How do you choose a baby name?",
-        a: "We consider the baby's birth date, parents' numbers, and desired life path to suggest names that will positively influence the child's future."
-      },
-      {
-        q: "How many name options will I receive?",
-        a: "You'll receive 5-10 carefully selected name options, each with a detailed analysis of its numerological significance."
-      }
-    ]
-  },
-  {
-    icon: <FaClock />,
-    title: "Wristwatch Analysis",
-    description: "Learn how your wristwatch number can influence your daily life and decision-making abilities.",
-    price: "₹1,000 - ₹2,500",
-    faqs: [
-      {
-        q: "Does the watch number really matter?",
-        a: "Yes, the numbers on your watch can create subtle influences on your timing, decision-making, and daily energy patterns."
-      },
-      {
-        q: "What's included in watch analysis?",
-        a: "We analyze your personal numbers in relation to watch numbers, suggesting optimal number combinations for your success."
-      }
-    ]
-  }
-];
+const StyledInputIcon = styled.div`
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+`;
+
+const filters = ['All', 'Business', 'Personal', 'Family', 'Timing'];
 
 const NumerologyPage = () => {
   const [expandedFAQs, setExpandedFAQs] = useState({});
@@ -523,7 +473,64 @@ const NumerologyPage = () => {
     message: ''
   });
 
-  const filters = ['All', 'Business', 'Personal', 'Family', 'Timing'];
+  const [dbServices, setDbServices] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
+  const [servicesError, setServicesError] = useState(null);
+
+  useEffect(() => {
+    const fetchServicesAndProducts = async () => {
+      try {
+        setServicesLoading(true);
+        // Fetch both services and products in parallel
+        const [servicesResponse, productsResponse] = await Promise.all([
+          serviceAPI.getServices({ category: 'numerology' }),
+          productAPI.getProducts('', '', 'numerology')
+        ]);
+        
+        console.log('Services response:', servicesResponse.data);
+        console.log('Products response:', productsResponse.data);
+        
+        setDbServices(servicesResponse.data.services || []);
+        setProducts(productsResponse.data.products || []);
+        setServicesLoading(false);
+      } catch (err) {
+        console.error('Error fetching numerology data:', err);
+        setServicesError('Failed to load numerology data: ' + (err.message || 'Unknown error'));
+        setServicesLoading(false);
+        // Fallback to empty arrays if API fails
+        setDbServices([]);
+        setProducts([]);
+      }
+    };
+
+    fetchServicesAndProducts();
+  }, []);
+
+  const processDbServices = () => {
+    if (!dbServices || dbServices.length === 0) return [];
+
+    return dbServices.map(service => ({
+      _id: service._id,
+      icon: getIconForCategory(service.name),
+      title: service.name,
+      category: service.category,
+      description: service.description,
+      price: service.price,
+      faqs: service.faqs || []
+    }));
+  };
+
+  const getIconForCategory = (name) => {
+    const lowerName = name.toLowerCase();
+    if (lowerName.includes('business')) return <FaBriefcase />;
+    if (lowerName.includes('name') && lowerName.includes('baby')) return <FaBaby />;
+    if (lowerName.includes('name')) return <FaUser />;
+    if (lowerName.includes('forecast')) return <FaClock />;
+    return <FaStar />; // Default icon
+  };
+
+  const combinedServices = processDbServices();
 
   const toggleFilter = (filter) => {
     setActiveFilters(prev => {
@@ -535,32 +542,63 @@ const NumerologyPage = () => {
     });
   };
 
-  const filteredServices = services.filter(service => {
-    const matchesSearch = service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         service.description.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredServices = combinedServices.filter(service => {
+    if (searchTerm && 
+        !service.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
+        !service.description.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return false;
+    }
     
-    if (!matchesSearch) return false;
-    if (activeFilters.length === 0) return true;
-    
-    return activeFilters.some(filter => {
-      switch (filter) {
-        case 'Business': return service.title.includes('Business');
-        case 'Personal': return service.title.includes('Personal');
-        case 'Family': return service.title.includes('Newborn');
-        case 'Timing': return service.title.includes('Watch');
-        default: return true;
-      }
+    return activeFilters.length === 0 || activeFilters.some(filter => {
+      if (filter === 'All') return true;
+      const serviceCategory = service.category?.toLowerCase();
+      return filter.toLowerCase() === serviceCategory;
     });
   });
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated, user } = useSelector(state => state.auth);
+  const isAdmin = user?.isAdmin;
 
   const handleBooking = (service) => {
     setSelectedService(service);
     setShowBookingModal(true);
   };
 
+  const handleAddToCart = (service) => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to add items to your cart');
+      navigate('/login');
+      return;
+    }
+
+    const productId = service._id || ('num-' + service.title.toLowerCase().replace(/\s+/g, '-'));
+    
+    let priceValue;
+    if (typeof service.price === 'number') {
+      priceValue = service.price;
+    } else if (typeof service.price === 'string') {
+      const priceStr = service.price.replace(/₹|,/g, '');
+      priceValue = parseInt(priceStr, 10);
+    } else {
+      priceValue = 4999; // Default price if no valid price format
+    }
+    
+    dispatch(addItemToCart({
+      productId,
+      quantity: 1
+    }));
+    
+    toast.success(`${service.title} added to cart`);
+  };
+
+  const handleEditService = (serviceId) => {
+    navigate(`/admin/service-edit/${serviceId}`);
+  };
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically handle the form submission
     console.log('Booking submitted:', { service: selectedService, ...formData });
     setShowBookingModal(false);
     setShowSuccess(true);
@@ -637,15 +675,27 @@ const NumerologyPage = () => {
         </SearchBar>
 
         <ServicesGrid>
-          {filteredServices.map((service, serviceIndex) => (
+          {servicesLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '3rem', gridColumn: '1 / -1' }}>
+              <FaSpinner style={{ fontSize: '2rem', color: 'white', animation: 'spin 1s linear infinite' }} />
+            </div>
+          ) : servicesError ? (
+            <div style={{ color: 'white', textAlign: 'center', padding: '3rem', gridColumn: '1 / -1' }}>
+              {servicesError}
+            </div>
+          ) : filteredServices.length === 0 && products.length === 0 ? (
+            <div style={{ color: 'white', textAlign: 'center', padding: '3rem', gridColumn: '1 / -1' }}>
+              No numerology services found matching your criteria.
+            </div>
+          ) : filteredServices.map((service, serviceIndex) => (
             <ServiceCard
-              key={serviceIndex}
+              key={service._id || serviceIndex}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: serviceIndex * 0.1 }}
               viewport={{ once: true }}
             >
-              {service.title === 'Business Numerology' && (
+              {service.title.includes('Business') && (
                 <PopularSearchBadge
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
@@ -657,15 +707,20 @@ const NumerologyPage = () => {
               <IconWrapper>{service.icon}</IconWrapper>
               <ServiceTitle>{service.title}</ServiceTitle>
               <ServiceDescription>{service.description}</ServiceDescription>
-              <PriceRange>{service.price}</PriceRange>
+              <PriceRange>
+                {typeof service.price === 'number' 
+                  ? `₹${service.price.toLocaleString('en-IN')}`
+                  : service.price}
+              </PriceRange>
               
               <FAQSection>
-                {service.faqs.map((faq, faqIndex) => (
+                {service.faqs && service.faqs.map((faq, faqIndex) => (
                   <div key={faqIndex}>
                     <FAQTitle onClick={() => toggleFAQ(serviceIndex, faqIndex)}>
-                      {faq.q}
+                      {faq.question || faq.q}
                       {expandedFAQs[`${serviceIndex}-${faqIndex}`] ? '−' : '+'}
                     </FAQTitle>
+
                     <AnimatePresence>
                       {expandedFAQs[`${serviceIndex}-${faqIndex}`] && (
                         <FAQContent
@@ -674,7 +729,7 @@ const NumerologyPage = () => {
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.3 }}
                         >
-                          {faq.a}
+                          {faq.answer || faq.a}
                         </FAQContent>
                       )}
                     </AnimatePresence>
@@ -682,13 +737,90 @@ const NumerologyPage = () => {
                 ))}
               </FAQSection>
 
-              <Button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleBooking(service)}
-              >
-                Book Consultation
-              </Button>
+              <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <Button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleBooking(service)}
+                    style={{ flex: '1' }}
+                  >
+                    Book Consultation
+                  </Button>
+                  <Button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleAddToCart(service)}
+                    style={{ 
+                      flex: '1', 
+                      background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)'
+                    }}
+                  >
+                    <FaShoppingCart style={{ marginRight: '8px' }} /> Add to Cart
+                  </Button>
+                </div>
+                
+                {isAdmin && service._id && (
+                  <Button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleEditService(service._id)}
+                    style={{
+                      background: 'linear-gradient(135deg, #10B981, #059669)'
+                    }}
+                  >
+                    <FaEdit style={{ marginRight: '8px' }} /> Edit Service
+                  </Button>
+                )}
+              </div>
+            </ServiceCard>
+          ))}
+          
+          {/* Display Products */}
+          {products.map((product, index) => (
+            <ServiceCard
+              key={product._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 * (index + 1 + filteredServices.length) }}
+            >
+              <IconWrapper>
+                <FaStar />
+              </IconWrapper>
+              <ServiceTitle>{product.name}</ServiceTitle>
+              <ServiceDescription>{product.description}</ServiceDescription>
+              <PriceRange>₹{product.price}</PriceRange>
+              
+              <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+                <Button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleAddToCart({ 
+                    _id: product._id, 
+                    title: product.name, 
+                    price: product.price 
+                  })}
+                  style={{ 
+                    flex: '1', 
+                    background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)'
+                  }}
+                >
+                  <FaShoppingCart style={{ marginRight: '8px' }} /> Add to Cart
+                </Button>
+                
+                {isAdmin && (
+                  <Button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate(`/dashboard?tab=products&edit=${product._id}`)}
+                    style={{
+                      background: 'linear-gradient(135deg, #10B981, #059669)'
+                    }}
+                  >
+                    <FaEdit style={{ marginRight: '8px' }} /> Edit Product
+                  </Button>
+                )}
+              </div>
             </ServiceCard>
           ))}
         </ServicesGrid>

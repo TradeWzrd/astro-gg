@@ -1,6 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { FaShoppingCart } from 'react-icons/fa';
+import { addItemToCart } from '../Redux/CartSlice';
 import ViewMoreButton from './ViewMoreButton';
 
 const SectionContainer = styled.section`
@@ -194,21 +199,24 @@ const Button = styled(motion.button)`
 
 const reports = [
   {
+    id: "astro-birth-chart",
     title: "Comprehensive Birth Chart Report",
     description: "Get a detailed 20+ page analysis of your birth chart, including planetary positions, houses, aspects, and life path predictions. Understand your core personality, strengths, and potential challenges.",
-    price: "$199",
+    price: 13999,
     image: "https://images.unsplash.com/photo-1543722530-d2c3201371e7?w=500&auto=format&fit=crop&q=60"
   },
   {
+    id: "astro-transit",
     title: "Personalized Transit Report",
     description: "Understand how current planetary movements affect your life. Get insights into opportunities and challenges in career, relationships, and personal growth over the next 12 months.",
-    price: "$149",
+    price: 9999,
     image: "https://images.unsplash.com/photo-1518141532615-4305c9f914c9?w=500&auto=format&fit=crop&q=60"
   },
   {
+    id: "astro-career",
     title: "Career & Finance Forecast",
     description: "Specialized analysis focusing on your career path and financial prospects. Learn about favorable periods for investments, job changes, and business ventures.",
-    price: "$129",
+    price: 8499,
     image: "https://images.unsplash.com/photo-1502481851512-e9e2529bfbf9?w=500&auto=format&fit=crop&q=60"
   }
 ];
@@ -238,6 +246,25 @@ const cardVariants = {
 };
 
 const AstrologyReports = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useSelector(state => state.auth);
+
+  // Handle adding report to cart
+  const handleAddToCart = (report) => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to add items to your cart');
+      navigate('/login');
+      return;
+    }
+    
+    dispatch(addItemToCart({
+      productId: report.id,
+      quantity: 1
+    }));
+    
+    // The toast is shown by the thunk automatically
+  };
   return (
     <SectionContainer>
       <Title
@@ -274,13 +301,14 @@ const AstrologyReports = () => {
             <ContentContainer>
               <ReportTitle>{report.title}</ReportTitle>
               <ReportDescription>{report.description}</ReportDescription>
-              <PriceTag>{report.price}</PriceTag>
+              <PriceTag>₹{report.price.toLocaleString('en-IN')}</PriceTag>
               <ButtonContainer>
                 <Button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={() => handleAddToCart(report)}
                 >
-                  Get Report
+                  <FaShoppingCart style={{ marginRight: '8px' }} /> Add to Cart
                 </Button>
               </ButtonContainer>
             </ContentContainer>

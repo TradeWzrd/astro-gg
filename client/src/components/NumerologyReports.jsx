@@ -1,6 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { FaShoppingCart } from 'react-icons/fa';
+import { addItemToCart } from '../Redux/CartSlice';
 import ViewMoreButton from './ViewMoreButton';
 
 const SectionContainer = styled.section`
@@ -229,26 +234,46 @@ const cardVariants = {
 
 const reports = [
   {
+    id: "num-life-path",
     title: "Life Path Number Analysis",
     description: "Discover your life's purpose and potential through your Life Path Number. Get detailed insights about your personality traits, career paths, and life lessons.",
-    price: "$89",
+    price: 6999,
     image: "https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=500&auto=format&fit=crop&q=60"
   },
   {
+    id: "num-year-forecast",
     title: "Personal Year Forecast",
     description: "Understand the energies and opportunities of your current personal year cycle. Get month-by-month predictions and guidance for making the most of your year.",
-    price: "$79",
+    price: 5499,
     image: "https://images.unsplash.com/photo-1505506874110-6a7a69069a08?w=500&auto=format&fit=crop&q=60"
   },
   {
+    id: "num-name-analysis",
     title: "Name Analysis Report",
     description: "Learn how your name influences your life. Get insights into your Expression, Soul Urge, and Personality numbers and how they shape your destiny.",
-    price: "$69",
-    image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=60"
+    price: 4999,
+    image: "https://images.unsplash.com/photo-1567767330332-9d66810dcdaf?w=500&auto=format&fit=crop&q=60"
   }
 ];
 
 const NumerologyReports = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useSelector(state => state.auth);
+
+  // Handle adding report to cart
+  const handleAddToCart = (report) => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to add items to your cart');
+      navigate('/login');
+      return;
+    }
+    
+    dispatch(addItemToCart({
+      productId: report.id,
+      quantity: 1
+    }));
+  };
   return (
     <SectionContainer>
       <Title>Numerology Reports</Title>
@@ -268,12 +293,13 @@ const NumerologyReports = () => {
             <ContentContainer>
               <ReportTitle>{report.title}</ReportTitle>
               <ReportDescription>{report.description}</ReportDescription>
-              <PriceTag>{report.price}</PriceTag>
+              <PriceTag>₹{report.price.toLocaleString('en-IN')}</PriceTag>
               <Button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => handleAddToCart(report)}
               >
-                Get Report
+                <FaShoppingCart style={{ marginRight: '8px' }} /> Add to Cart
               </Button>
             </ContentContainer>
           </ReportCard>

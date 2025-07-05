@@ -33,7 +33,7 @@ const FAQItem = styled(motion.div)`
   overflow: hidden;
 `;
 
-const Question = styled.button`
+const QuestionButton = styled.button`
   width: 100%;
   padding: 1.5rem;
   display: flex;
@@ -52,17 +52,21 @@ const Question = styled.button`
     background: rgba(255, 255, 255, 0.05);
   }
 
-  span {
-    font-size: 1.5rem;
+  svg {
+    transform: rotate(${props => props.$isOpen ? '180deg' : '0deg'});
     transition: transform 0.3s ease;
-    transform: ${props => props.isOpen ? 'rotate(45deg)' : 'rotate(0)'};
   }
 `;
 
 const Answer = styled(motion.div)`
-  padding: 0 1.5rem 1.5rem;
+  padding: 0 1.5rem;
   color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
   line-height: 1.6;
+`;
+
+const AnswerContent = styled.div`
+  padding-bottom: 1.5rem;
 `;
 
 const faqs = [
@@ -95,32 +99,51 @@ const faqs = [
 const FAQs = () => {
   const [openIndex, setOpenIndex] = useState(null);
 
+  const toggleQuestion = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   return (
     <SectionContainer>
       <Title
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
       >
         Frequently Asked Questions
       </Title>
-      
       <FAQContainer>
         {faqs.map((faq, index) => (
           <FAQItem
             key={index}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
           >
-            <Question
-              isOpen={openIndex === index}
-              onClick={() => setOpenIndex(openIndex === index ? null : index)}
+            <QuestionButton
+              onClick={() => toggleQuestion(index)}
+              $isOpen={openIndex === index}
+              type="button"
             >
               {faq.question}
-              <span>+</span>
-            </Question>
-            
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 7.5L10 12.5L15 7.5"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </QuestionButton>
             <AnimatePresence>
               {openIndex === index && (
                 <Answer
@@ -129,7 +152,7 @@ const FAQs = () => {
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {faq.answer}
+                  <AnswerContent>{faq.answer}</AnswerContent>
                 </Answer>
               )}
             </AnimatePresence>
